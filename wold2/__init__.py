@@ -5,9 +5,11 @@ from clld.db.meta import (
     DBSession,
     Base,
 )
+from clld import interfaces
 
-from wold2.datatables import Counterparts
-from wold2.maps import MeaningMap
+from wold2.datatables import Counterparts, WoldLanguages
+from wold2.maps import MeaningMap, LanguageMap
+from wold2.adapters import WoldGeoJsonLanguages
 
 
 def main(global_config, **settings):
@@ -20,7 +22,15 @@ def main(global_config, **settings):
 
     config.include('clld.web.app')
     config.register_datatable('values', Counterparts)
+    config.register_datatable('languages', WoldLanguages)
     config.register_map('parameter', MeaningMap)
+    config.register_map('languages', LanguageMap)
+
+    config.registry.registerAdapter(
+        WoldGeoJsonLanguages,
+        (interfaces.ILanguage,),
+        interfaces.IIndex,
+        name=WoldGeoJsonLanguages.mimetype)
 
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_route('home', '/')
