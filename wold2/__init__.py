@@ -1,4 +1,5 @@
 from pyramid.config import Configurator
+from pyramid.events import BeforeRender
 from sqlalchemy import engine_from_config
 
 from clld.db.meta import (
@@ -7,8 +8,9 @@ from clld.db.meta import (
 )
 from clld import interfaces
 
+from wold2 import util
 from wold2.datatables import Counterparts, WoldLanguages
-from wold2.maps import MeaningMap, LanguageMap
+from wold2.maps import MeaningMap, LanguagesMap, LanguageMap
 from wold2.adapters import WoldGeoJsonLanguages
 
 
@@ -20,11 +22,17 @@ def main(global_config, **settings):
     Base.metadata.bind = engine
     config = Configurator(settings=settings)
 
+    def add_util(event):
+        event['wold'] = util
+
+    config.add_subscriber(add_util, BeforeRender)
+
     config.include('clld.web.app')
     config.register_datatable('values', Counterparts)
     config.register_datatable('languages', WoldLanguages)
     config.register_map('parameter', MeaningMap)
-    config.register_map('languages', LanguageMap)
+    config.register_map('languages', LanguagesMap)
+    config.register_map('language', LanguageMap)
 
     config.registry.registerAdapter(
         WoldGeoJsonLanguages,

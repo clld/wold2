@@ -1,7 +1,7 @@
 from sqlalchemy import desc
 
 from clld.web.datatables import Values, Languages
-from clld.web.datatables.base import Col
+from clld.web.datatables.base import Col, LinkCol
 from clld.web.util.htmllib import tag
 
 from wold2.models import Word, Counterpart, Vocabulary, WoldLanguage
@@ -43,9 +43,6 @@ class VocabularyCol(Col):
         return Vocabulary.name.contains(qs)
 
     def format(self, item):
-        #
-        # TODO: color!!
-        #
         if item.vocabulary:
             return tag('div', item.vocabulary.name,
                        **{'style': "background-color: #%s;" % item.vocabulary.color,
@@ -67,7 +64,7 @@ class WoldLanguages(Languages):
     def col_defs(self):
         return [
             IdCol(self, 'id'),
-            Col(self, 'name'),
+            LinkCol(self, 'name', route_name='language'),
             Col(self, 'family'),
             VocabularyCol(self, 'vocabulary'),
         ]

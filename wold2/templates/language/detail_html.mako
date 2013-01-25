@@ -6,12 +6,30 @@
 
 <h2>Language ${ctx.name}</h2>
 
-    <ul class="nav nav-tabs">
-    <li class="active">
-    <a href="#">As donor language</a>
+% if ctx.vocabulary:
+<ul class="nav nav-tabs">
+    <li class="${'active' if request.params.get('t') != 'recipient' else ''}">
+        <a href="${request.purl.query_param('t', 'donor')}">As donor language</a>
     </li>
-    <li><a href="#">As recipient Language</a></li>
-    </ul>
+    <li class="${'active' if request.params.get('t') == 'recipient' else ''}">
+        <a href="${request.purl.query_param('t', 'recipient')}">As recipient Language</a>
+    </li>
+</ul>
+% endif
+
+<% rel_langs = list(wold.get_related_languages(ctx, request)) %>
+<% request.map.layers[0]['data'] = wold.get_related_languages_geojson(ctx, request, rel_langs) %>
+${request.map.render()}
+
+
+##% for l in wold.get_related_languages(ctx, request):
+##<div>${l.name}</div>
+##% endfor
+
+##
+## render map and list of loanwords
+##
+
 
 ##<dl>
 ##    <dt>Borrowed score</dt>
