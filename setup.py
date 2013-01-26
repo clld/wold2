@@ -11,9 +11,11 @@ requires = [
     'SQLAlchemy',
     'transaction',
     'pyramid_tm',
-    'pyramid_debugtoolbar',
+    #'pyramid_debugtoolbar',
     'zope.sqlalchemy',
-    'waitress',
+    #'waitress',
+    'gunicorn',
+    'psycopg2',
     ]
 
 setup(name='wold2',

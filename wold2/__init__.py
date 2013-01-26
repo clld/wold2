@@ -17,6 +17,9 @@ from wold2.adapters import WoldGeoJsonLanguages
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
+    settings['mako.directories'] = ['wold2:templates', 'clld:web/templates']
+    settings['clld.app_template'] = "wold2.mako"
+
     engine = engine_from_config(settings, 'sqlalchemy.')
     DBSession.configure(bind=engine)
     Base.metadata.bind = engine
