@@ -9,14 +9,11 @@
     <script src="${request.static_url('wold2:static/wold2.js')}"></script>
 </%block>
 
-##<%block name="header">WALS</%block>
-
-##<%block name="header">
-##    <a href="${request.route_url('home')}">
-##        <img src="${request.static_url('wold2:static/header.gif')}"/>
-##    </a>
-##</%block>
-
+<%block name="header">
+    <a href="${request.route_url('home')}">
+        <img src="${request.static_url('wold2:static/header.gif')}"/>
+    </a>
+</%block>
 
 <%block name="footer">
     <table style="width: 100%; border-top: 1px solid black;">

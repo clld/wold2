@@ -1,8 +1,12 @@
+"""
+custom datatables for wold2
+"""
 from sqlalchemy import desc
 
-from clld.web.datatables import Values, Languages
+from clld.web.datatables import Values, Languages, Contributors
 from clld.web.datatables.base import Col, LinkCol
-from clld.web.util.htmllib import tag
+from clld.web.util.htmllib import HTML
+from clld.web.util.helpers import text2html
 
 from wold2.models import Word, Counterpart, Vocabulary, WoldLanguage
 
@@ -44,9 +48,10 @@ class VocabularyCol(Col):
 
     def format(self, item):
         if item.vocabulary:
-            return tag('div', item.vocabulary.name,
-                       **{'style': "background-color: #%s;" % item.vocabulary.color,
-                          'class': 'dt-full-cell'})
+            return HTML.div(
+                item.vocabulary.name,
+                style="background-color: #%s;" % item.vocabulary.color,
+                class_='dt-full-cell')
         return ''
 
 
@@ -68,3 +73,15 @@ class WoldLanguages(Languages):
             Col(self, 'family'),
             VocabularyCol(self, 'vocabulary'),
         ]
+
+
+class WoldContributors(Contributors):
+    """In WOLD, the contributors table does also list the address.
+    """
+    def col_defs(self):
+        class AddressCol(Col):
+            def format(self, item):
+                return text2html(item.address)
+
+        res = Contributors.col_defs(self)
+        return [res[0]] + [AddressCol(self, 'address')] + res[1:]
