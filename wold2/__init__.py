@@ -8,6 +8,7 @@ from wold2 import util
 from wold2.datatables import Counterparts, WoldLanguages, WoldContributors
 from wold2.maps import MeaningMap, LanguagesMap, LanguageMap
 from wold2.adapters import WoldGeoJsonLanguages
+from wold2 import views
 
 
 def main(global_config, **settings):
@@ -40,4 +41,5 @@ def main(global_config, **settings):
 
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_route('home', '/')
+    config.scan(views)
     return config.make_wsgi_app()
