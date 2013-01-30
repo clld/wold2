@@ -12,8 +12,8 @@ from wold2.models import Word, Counterpart, Vocabulary, WoldLanguage
 
 
 class WordCol(Col):
-    def order(self, direction):
-        return desc(Word.name) if direction == 'desc' else Word.name
+    def order(self):
+        return Word.name
 
     def search(self, qs):
         return Word.name.contains(qs)
@@ -56,8 +56,8 @@ class VocabularyCol(Col):
 
 
 class IdCol(Col):
-    def order(self, direction):
-        return desc(WoldLanguage.pk) if direction == 'desc' else WoldLanguage.pk
+    def order(self):
+        return WoldLanguage.pk
 
 
 class WoldLanguages(Languages):

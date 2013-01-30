@@ -1,6 +1,5 @@
 from pyramid.config import Configurator
 from pyramid.events import BeforeRender
-from sqlalchemy import engine_from_config
 
 from clld import interfaces
 
@@ -33,11 +32,11 @@ def main(global_config, **settings):
     config.register_map('languages', LanguagesMap)
     config.register_map('language', LanguageMap)
 
-    config.registry.registerAdapter(
+    config.register_adapter(
         WoldGeoJsonLanguages,
-        (interfaces.ILanguage,),
+        interfaces.ILanguage,
         interfaces.IIndex,
-        name=WoldGeoJsonLanguages.mimetype)
+        WoldGeoJsonLanguages.mimetype)
 
     config.add_static_view('static', 'static', cache_max_age=3600)
     config.add_route('home', '/')
