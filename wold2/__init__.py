@@ -24,6 +24,7 @@ def main(global_config, **settings):
     config.add_subscriber(add_util, BeforeRender)
 
     config.include('clld.web.app')
+    config.register_app('wold2')
 
     config.register_datatable('values', Counterparts)
     config.register_datatable('languages', WoldLanguages)
@@ -38,7 +39,4 @@ def main(global_config, **settings):
         interfaces.IIndex,
         WoldGeoJsonLanguages.mimetype)
 
-    config.add_static_view('static', 'static', cache_max_age=3600)
-    config.add_route('home', '/')
-    config.scan(views)
     return config.make_wsgi_app()

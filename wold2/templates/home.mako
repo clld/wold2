@@ -1,7 +1,7 @@
 <%inherit file="wold2.mako"/>
 
 <%def name="sidebar()">
-  <div id="wold_news" class="well">
+  <div id="wold_news" class="well well-small">
   </div>
   <script>
 $(document).ready(function() {
