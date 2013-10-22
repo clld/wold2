@@ -8,9 +8,7 @@ class MeaningMap(ParameterMap):
 
 class LanguageMap(Map):
     def options(self):
-        return {
-            'style_map': 'wold_languages',
-            'center': [self.ctx.longitude, self.ctx.latitude]}
+        return {'style_map': 'wold_languages'}
 
 
 class LanguagesMap(Map):

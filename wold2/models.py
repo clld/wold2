@@ -23,6 +23,7 @@ from clld.db.models.common import (
     Language,
     Parameter,
     Value,
+    ValueSet,
     DomainElement,
     Contribution,
     Unit,
@@ -31,6 +32,8 @@ from clld.db.models.common import (
     IdNameDescriptionMixin,
 )
 
+from wold2.interfaces import ISemanticField
+
 
 class ScoreMixin(object):
     borrowed_score = Column(Float)
@@ -38,17 +41,9 @@ class ScoreMixin(object):
     simplicity_score = Column(Float)
 
 
+@implementer(ISemanticField)
 class SemanticField(Base, IdNameDescriptionMixin, ScoreMixin):
     pass
-
-
-@implementer(interfaces.IContribution)
-class Vocabulary(Contribution, CustomModelMixin):
-    pk = Column(Integer, ForeignKey('contribution.pk'), primary_key=True)
-
-    other_information = Column(Unicode)
-    color = Column(String(6))  # three letter hex rgb values
-    abbreviations = Column(Unicode)
 
 
 @implementer(interfaces.IUnitDomainElement)
@@ -57,8 +52,8 @@ class WoldUnitDomainElement(UnitDomainElement, CustomModelMixin):
     specific domains. Thus we store a reference to the vocabulary.
     """
     pk = Column(Integer, ForeignKey('unitdomainelement.pk'), primary_key=True)
-    vocabulary_pk = Column(Integer, ForeignKey('vocabulary.pk'))
-    vocabulary = relationship(Vocabulary)
+    vocabulary_pk = Column(Integer, ForeignKey('contribution.pk'))
+    vocabulary = relationship(Contribution)
 
 
 @implementer(interfaces.IUnit)
@@ -108,6 +103,14 @@ class Counterpart(Value, CustomModelMixin):
     word = relationship(Word, backref='counterparts')
 
 
+@implementer(interfaces.IContribution)
+class Vocabulary(Contribution, CustomModelMixin):
+    pk = Column(Integer, ForeignKey('contribution.pk'), primary_key=True)
+    count_words = Column(Integer)
+    borrowed_score = Column(Float)
+    color = Column(String)
+
+
 @implementer(interfaces.ILanguage)
 class WoldLanguage(Language, CustomModelMixin):
     pk = Column(Integer, ForeignKey('language.pk'), primary_key=True)
@@ -129,9 +132,11 @@ class Meaning(Parameter, CustomModelMixin, ScoreMixin):
     semantic_field_pk = Column(Integer, ForeignKey('semanticfield.pk'))
     semantic_field = relationship(SemanticField, backref='meanings')
 
+    representation = Column(Integer)
     semantic_category = Column(Unicode)
 
     ids_code = Column(String)
+    sub_code = Column(String)
     typical_context = Column(Unicode)
     #Column('french', Unicode())
     #Column('spanish', Unicode())
@@ -197,9 +202,9 @@ order by
     assert type_ in ['borrowed', 'age', 'simplicity']
     attr = '%s_score' % type_
 
-    word, counterpart, parameter, meaning, value = map(
+    word, counterpart, parameter, meaning, valueset, value = map(
         lambda mapper: mapper.__table__,
-        [Word, Counterpart, Parameter, Meaning, Value])
+        [Word, Counterpart, Parameter, Meaning, ValueSet, Value])
 
     x = alias(
         select(
@@ -210,7 +215,8 @@ order by
             ],
             from_obj=value,
             whereclause=and_(
-                value.c.parameter_pk == parameter.c.pk,
+                value.c.valueset_pk == valueset.c.pk,
+                valueset.c.parameter_pk == parameter.c.pk,
                 parameter.c.pk == meaning.c.pk,
                 value.c.pk == counterpart.c.pk)),
         name='x')

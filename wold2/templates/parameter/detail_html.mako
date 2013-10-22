@@ -1,22 +1,21 @@
 <%inherit file="../${context.get('request').registry.settings.get('clld.app_template', 'app.mako')}"/>
 <%namespace name="util" file="../util.mako"/>
 
-<%! from clld.interfaces import IDataTable %>
-<%! from clld.db.models.common import Value %>
 
-<h2>Meaning ${ctx.name}</h2>
+<h2>Meaning ${ctx.id}: ${ctx.name}</h2>
 
-<dl>
-    <dt>Borrowed score</dt>
-    <dd>${ctx.borrowed_score}</dd>
-</dl>
+<div class="row-fluid">
+<div class="span6">
+${util.dl_table(*list(u.get_meaning_properties(request, ctx)))}
+</div>
+</div>
 
-% if request.map:
+<ul class="nav nav-pills pull-right">
+    <li><a href="#map-container">Map</a></li>
+    <li><a href="#list-container">List</a></li>
+</ul>
+<h3>Counterpart words in the World Loanword Database</h3>
 ${request.map.render()}
-% endif
-
-
-<div>
-    <% dt = request.registry.getUtility(IDataTable, 'values'); dt = dt(request, Value, parameter=ctx) %>
-    ${dt.render()}
+<div id="list-container">
+${request.get_datatable('values', h.models.Value, parameter=ctx).render()}
 </div>

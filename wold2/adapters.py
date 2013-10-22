@@ -1,9 +1,17 @@
+from __future__ import unicode_literals
 from sqlalchemy.orm import aliased
 
 from clld.db.meta import DBSession
-from clld.web.adapters import GeoJsonLanguages, GeoJson
+from clld.web.adapters import GeoJsonLanguages, GeoJson, GeoJsonParameter
 
 from wold2.models import WoldLanguage, Word
+
+
+class GeoJsonMeaning(GeoJsonParameter):
+    def feature_properties(self, ctx, req, valueset):
+        return {
+            'values': list(valueset.values),
+            'label': '%s: %s' % (valueset.language, ', '.join(v.word.name for v in valueset.values))}
 
 
 class WoldGeoJsonLanguages(GeoJsonLanguages):

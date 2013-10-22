@@ -1,0 +1,43 @@
+# English translations for wold2.
+# Copyright (C) 2013 ORGANIZATION
+# This file is distributed under the same license as the wold2 project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: wold2 0.0\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2013-10-22 10:46+0200\n"
+"PO-Revision-Date: 2013-10-22 10:46+0200\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 1.3\n"
+
+#: wold2/__init__.py:10
+msgid "Contribution"
+msgstr "Vocabulary"
+
+#: wold2/__init__.py:11
+msgid "Contributions"
+msgstr "Vocabularies"
+
+#: wold2/__init__.py:12
+msgid "Contributor"
+msgstr "Author"
+
+#: wold2/__init__.py:13
+msgid "Contributors"
+msgstr "Authors"
+
+#: wold2/__init__.py:14
+msgid "Parameter"
+msgstr "Meaning"
+
+#: wold2/__init__.py:15
+msgid "Parameters"
+msgstr "Meanings"
+

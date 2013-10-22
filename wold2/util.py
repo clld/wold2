@@ -1,8 +1,22 @@
 from sqlalchemy.orm import aliased
 
+from clld.web.util.helpers import link
 from clld.db.meta import DBSession
 
 from wold2.models import WoldLanguage, Word, Loan
+
+
+def get_meaning_properties(req, ctx):
+    for attr, converter in [
+        ('description', lambda s: s),
+        ('typical_context', lambda s: s),
+        ('semantic_field', lambda sf: link(req, sf)),
+        ('semantic_category', lambda s: s),
+        ('borrowed_score', lambda f: '{0:.2f}'.format(f)),
+        ('age_score', lambda f: '{0:.2f}'.format(f)),
+        ('simplicity_score', lambda f: '{0:.2f}'.format(f)),
+    ]:
+        yield (attr.capitalize().replace('_', ' '), converter(getattr(ctx, attr)))
 
 
 def get_related_languages(ctx, req):
