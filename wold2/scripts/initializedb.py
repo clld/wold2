@@ -11,6 +11,12 @@ from wold2 import models
 
 
 DB = 'postgresql://robert@/wold'
+GC = create_engine('postgresql://robert@/glottolog3')
+
+glottocodes = {}
+for row in GC.execute('select ll.hid, l.id from language as l, languoid as ll where ll.pk = l.pk'):
+    if row[0] and len(row[0]) == 3:
+        glottocodes[row[0]] = row[1]
 
 
 def main(args):
@@ -78,6 +84,9 @@ def main(args):
     for row in old_db.execute("select * from language_code"):
         _id = '%(type)s-%(code)s' % row
         data.add(common.Identifier, _id, id=_id, type=row['type'], name=row['code'])
+        if row['type'] == 'iso639-3' and row['code'] in glottocodes:
+            gc = glottocodes[row['code']]
+            data.add(common.Identifier, gc, id=gc, type=common.IdentifierType.glottolog.value, name=gc)
     DBSession.flush()
 
     #
@@ -87,6 +96,12 @@ def main(args):
         _id = '%(type)s-%(code)s' % row
         data.add(common.LanguageIdentifier, '%s-%s' % (_id, row['language_id']),
             identifier_pk=data['Identifier'][_id].pk, language_pk=data['WoldLanguage'][row['language_id']].pk)
+        if row['type'] == 'iso639-3' and row['code'] in glottocodes:
+            gc = glottocodes[row['code']]
+            data.add(
+                common.LanguageIdentifier, '%s-%s' % (gc, row['language_id']),
+                identifier_pk=data['Identifier'][gc].pk,
+                language_pk=data['WoldLanguage'][row['language_id']].pk)
     DBSession.flush()
 
     #
@@ -154,7 +169,7 @@ def main(args):
             lang = data['WoldLanguage'][key]
             data.add(
                 common.ValueSet, '%s-%s' % (key, row['id']),
-                id='%s-%s' % (key, row['id']),
+                id='%s-%s' % (key, row['id'].replace('.', '-')),
                 language=lang,
                 contribution=lang.vocabulary,
                 parameter=p)
@@ -163,14 +178,57 @@ def main(args):
 
     #
     # migrate word table:
+    # TODO: all the other word properties!!
     #
+    fields = [
+        'age_label',
+        'original_script',
+        'grammatical_info',
+        'comment_on_word_form',
+        'gloss',
+        "comment_on_borrowed",
+        "calqued",
+        "borrowed_base",
+        "numeric_frequency",
+        "relative_frequency",
+        "effect",
+        "integration",
+        "salience",
+        "reference",
+        "other_comments",
+        "register",
+        "loan_history",
+        'colonial_word',
+        'paraphrase_in_dutch',
+        'word_source',
+        'paraphrase_in_german',
+        'lexical_stratum',
+        'comparison_with_mandarin',
+        'year',
+        'comparison_with_korean',
+        'czech_translation',
+        'hungarian_translation',
+        'early_romani_reconstruction',
+        'etymological_note',
+        'boretzky_and_igla_etymology',
+        'manuss_et_al_etymology',
+        'vekerdi_etymology',
+        'turner_etymology',
+        'other_etymologies',
+        'mayrhofer_etymology',
+    ]
     word_to_vocab = {}
     for row in old_db.execute("select * from word"):
         word_to_vocab[row['id']] = row['vocabulary_id']
         kw = dict((key, row[key]) for key in ['id', 'age_score',
                                               'borrowed', 'borrowed_score',
                                               'analyzability', 'simplicity_score'])
-        w = data.add(models.Word, row['id'], name=row['form'], description=row['free_meaning'], **kw)
+        w = data.add(
+            models.Word, row['id'],
+            name=row['form'],
+            description=row['free_meaning'],
+            jsondata={k: row[k] for k in fields},
+            **kw)
         w.language = data['Vocabulary'][row['vocabulary_id']].language
 
         if row['age_label']:
@@ -217,7 +275,8 @@ def main(args):
     DBSession.flush()
 
     #
-    # source words: we have to reassign identifier!
+    # source words: we have to make sure a word does only belong to one language.
+    # thus, we have to reassign identifier!
     #
     # loop over source_word, source_word_donor_language pairs keeping track of source_word ids:
     known_ids = {}
@@ -235,6 +294,11 @@ def main(args):
         new = data.add(models.Word, id_, id=id_, name=row['form'], description=row['meaning'])
         new.language = data['WoldLanguage'][row['language_id']]
 
+    # source words may end up as words without language!
+    for row in old_db.execute("select id, meaning, form from source_word where id not in (select source_word_id from source_word_donor_language)"):
+        id_ = '%s-%s' % (row['id'], 1)
+        new = data.add(models.Word, id_, id=id_, name=row['form'], description=row['meaning'])
+
     DBSession.flush()
 
     #
@@ -243,22 +307,24 @@ def main(args):
     #
     j = 0
     for row in old_db.execute("select * from word_source_word"):
-        sws = []
-        for i in range(4):
+        # there may be more than one word associated with a source_word_id (see above)
+        source_words = []
+        for i in range(4):  # but we guess no more than 4 :)
             id_ = '%s-%s' % (row['source_word_id'], i+1)
             if id_ in data['Word']:
-                sws.append(data['Word'][id_])
-        if not sws:
+                source_words.append(data['Word'][id_])
+        if not source_words:
             j += 1
             #print(row['source_word_id'])
             #raise ValueError(row['source_word_id'])
 
-        for sw in sws:
+        for sw in source_words:
             DBSession.add(models.Loan(
-                source_word=sw, target_word=data['Word'][row['word_id']],
-                relation=row['relationship'], certain=len(sws) == 1))
+                source_word=sw,
+                target_word=data['Word'][row['word_id']],
+                relation=row['relationship'], certain=len(source_words) == 1))
 
-    print('%s source words not migrated' % j)
+    print('%s source words not migrated because they have no donor language!' % j)
 
 
 def prime_cache(args):

@@ -79,18 +79,28 @@ class Word(Unit, ScoreMixin):
     borrowed = Column(Unicode)
     analyzability = Column(Unicode)
 
+    @property
+    def age(self):
+        res = [uv for uv in self.unitvalues if uv.unitparameter.id == 'a']
+        if res:
+            return res[0]
+
+    @property
+    def contact_situation(self):
+        res = [uv for uv in self.unitvalues if uv.unitparameter.id == 'cs']
+        if res:
+            return res[0]
+
 
 class Loan(Base):
     relation = Column(Unicode)
     certain = Column(Boolean, default=True)
 
     target_word_pk = Column(Integer, ForeignKey('word.pk'))
-    target_word = relationship(Word, backref='source_word_assocs',
-                               primaryjoin="Loan.target_word_pk==Word.pk")
+    target_word = relationship(Word, backref='source_word_assocs', foreign_keys=[target_word_pk])
 
     source_word_pk = Column(Integer, ForeignKey('word.pk'))
-    source_word = relationship(Word, backref='target_word_assocs',
-                               primaryjoin="Loan.source_word_pk==Word.pk")
+    source_word = relationship(Word, backref='target_word_assocs', foreign_keys=[source_word_pk])
 
 
 @implementer(interfaces.IValue)

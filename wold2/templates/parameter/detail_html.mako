@@ -5,7 +5,7 @@
 <h2>Meaning ${ctx.id}: ${ctx.name}</h2>
 
 <div class="row-fluid">
-<div class="span6">
+<div class="span8">
 ${util.dl_table(*list(u.get_meaning_properties(request, ctx)))}
 </div>
 </div>
@@ -19,3 +19,8 @@ ${request.map.render()}
 <div id="list-container">
 ${request.get_datatable('values', h.models.Value, parameter=ctx).render()}
 </div>
+<script>
+$(document).ready(function() {
+    $('.fieldinfo').clickover({'html': true});
+});
+</script>

@@ -1,9 +1,8 @@
-from clld.web.app import get_configurator
-from clld.interfaces import ILanguage, IIndex, IParameter
+from clld.web.app import get_configurator, MapMarker
+from clld.interfaces import ILanguage, IIndex, IParameter, IMapMarker
 from clld.web.adapters.base import Index, adapter_factory
 
-from wold2.datatables import Counterparts, WoldLanguages, Authors, Vocabularies, Meanings
-from wold2.maps import MeaningMap, LanguagesMap, LanguageMap
+from wold2.maps import LanguagesMap, LanguageMap, MeaningMap
 from wold2.adapters import WoldGeoJsonLanguages, GeoJsonMeaning
 from wold2.models import SemanticField
 from wold2.interfaces import ISemanticField
@@ -16,6 +15,26 @@ _('Contributor')
 _('Contributors')
 _('Parameter')
 _('Parameters')
+
+
+class WoldMapMarker(MapMarker):
+    def __call__(self, ctx, req):
+        c = None
+        #if interfaces.IValueSet.providedBy(ctx):
+        #    if req.matched_route.name == 'valueset' and not ctx.parameter.multivalued:
+        #        return ''
+        #    icon = ctx.jsondata['icon']
+
+        #if interfaces.IValue.providedBy(ctx):
+        #    icon = ctx.domainelement.jsondata['icon']
+
+        if ILanguage.providedBy(ctx):
+            c = 'ddd0000' if ctx.vocabulary else 'c4d6cee'
+
+        if c:
+            return req.static_url('clld:web/static/icons/%s.png' % c)
+
+        return super(WoldMapMarker, self).__call__(ctx, req)
 
 
 def main(global_config, **settings):
@@ -36,17 +55,12 @@ def main(global_config, **settings):
     settings['mako.directories'] = ['wold2:templates', 'clld:web/templates']
     settings['clld.app_template'] = "wold2.mako"
 
-    config = get_configurator('wold2', settings=settings)
+    config = get_configurator('wold2', (WoldMapMarker(), IMapMarker), settings=settings)
 
-    config.register_datatable('values', Counterparts)
-    config.register_datatable('languages', WoldLanguages)
-    config.register_datatable('contributors', Authors)
-    config.register_datatable('contributions', Vocabularies)
-    config.register_datatable('parameters', Meanings)
-    config.register_map('parameter', MeaningMap)
+    config.include('wold2.datatables')
     config.register_map('languages', LanguagesMap)
     config.register_map('language', LanguageMap)
-
+    config.register_map('parameter', MeaningMap)
     config.register_resource('semanticfield', SemanticField, ISemanticField, with_index=True)
     config.register_adapter(adapter_factory('semanticfield/detail_html.mako'), ISemanticField)
     config.register_adapter(adapter_factory('semanticfield/index_html.mako', base=Index), ISemanticField)

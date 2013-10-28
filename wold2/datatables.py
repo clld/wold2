@@ -3,11 +3,13 @@ custom datatables for wold2
 """
 from sqlalchemy import Integer
 from sqlalchemy.sql.expression import cast
-from sqlalchemy.orm import joinedload, joinedload_all
+from sqlalchemy.orm import joinedload, joinedload_all, aliased, contains_eager
 
+from clld.util import dict_merged
 from clld.web.datatables import Values, Languages, Contributors
-from clld.web.datatables.base import Col, LinkCol, PercentCol, IntegerIdCol
+from clld.web.datatables.base import Col, LinkCol, PercentCol, IntegerIdCol, LinkToMapCol
 from clld.web.datatables.contribution import Contributions, CitationCol, ContributorsCol
+from clld.web.datatables.unit import Units
 from clld.web.datatables.parameter import Parameters
 from clld.web.util.htmllib import HTML
 from clld.web.util.helpers import text2html, link
@@ -15,7 +17,87 @@ from clld.db.meta import DBSession
 from clld.db.models import common
 from clld.db.util import get_distinct_values
 
-from wold2.models import Word, Counterpart, WoldLanguage, Vocabulary, Meaning, SemanticField
+from wold2.models import (
+    Loan, Word, Counterpart, WoldLanguage, Vocabulary, Meaning, SemanticField,
+)
+
+
+class RelationCol(Col):
+    __kw__ = {'choices': ['immediate', 'earlier']}
+
+    def search(self, qs):
+        return Loan.relation == qs
+
+    def format(self, item):
+        coll = item.source_word_assocs if self.dt.type == 'donor' \
+               else item.target_word_assocs
+        attr = 'source_word' if self.dt.type == 'donor' else 'target_word'
+        return ', '.join(set([l.relation for l in coll if getattr(l, attr).language == self.dt.language]))
+        return '%s' % list(['%s (%s) -> %s (%s)' % (l.source_word, l.source_word.language, l.target_word, l.target_word.language) for l in coll if getattr(l, attr).language == self.dt.language])
+
+
+class RelWordsCol(Col):
+    def format(self, item):
+        coll = item.source_word_assocs if self.dt.type == 'donor' \
+               else item.target_word_assocs
+        attr = 'source_word' if self.dt.type == 'donor' else 'target_word'
+        return ', '.join([link(self.dt.req, getattr(l, attr)) for l in coll if getattr(l, attr).language == self.dt.language])
+
+
+
+class Words(Units):
+    def __init__(self, req, model, type_=None, **kw):
+        self.type = type_
+        if 'type_' in req.params:
+            self.type = req.params['type_']
+        assert self.type in ['donor', 'recipient']
+        self.Donor = aliased(WoldLanguage)
+        self.Recipient = aliased(WoldLanguage)
+        self.SourceWord = aliased(Word)
+        self.TargetWord = aliased(Word)
+        Units.__init__(self, req, model, eid='datatable-%s' % self.type, **kw)
+
+    def base_query(self, query):
+        if self.type == 'donor':
+            # we are looking for target words borrowed from english into other languages:
+            query = DBSession.query(common.Unit)\
+                .join(self.Recipient, self.Recipient.pk == common.Unit.language_pk)\
+                .join(Loan, common.Unit.pk == Loan.target_word_pk)\
+                .join(self.SourceWord, Loan.source_word_pk == self.SourceWord.pk)\
+                .join(self.Donor, self.Donor.pk == self.SourceWord.language_pk)\
+                .filter(self.Donor.pk == self.language.pk)\
+                .options(contains_eager(Word.source_word_assocs))
+        else:
+            query = DBSession.query(common.Unit)\
+                .join(self.Donor, self.Donor.pk == common.Unit.language_pk)\
+                .join(Loan, common.Unit.pk == Loan.source_word_pk)\
+                .join(self.TargetWord, Loan.target_word_pk == self.TargetWord.pk)\
+                .join(self.Recipient, self.Recipient.pk == self.TargetWord.language_pk)\
+                .filter(self.Recipient.pk == self.language.pk)\
+                .options(contains_eager(Word.target_word_assocs))
+        return query
+
+    def col_defs(self):
+        lang = self.Recipient if self.type == 'donor' else self.Donor
+        ltitle = 'Recipient language' if self.type == 'donor' else 'Donor languoid'
+        res = [
+            RelWordsCol(
+                self,
+                'self',
+                sTitle='Borrowed words' if self.type !='donor' else 'Source words',
+                model_col=self.SourceWord.name if self.type == 'donor' else self.TargetWord.name),
+            RelationCol(self, 'relation'),
+            LinkCol(self, 'language', sTitle=ltitle, get_obj=lambda i: i.language, model_col=lang.name),
+            LinkCol(self, 'other', model_col=common.Unit.name, sTitle='Borrowed word' if self.type =='donor' else 'Source word'),
+            LinkToMapCol(self, 'm', get_obj=lambda i: i.language, map_id=self.type + '-map'),
+        ]
+        return res
+
+    def xhr_query(self):
+        return dict_merged(super(Units, self).xhr_query(), type_=self.type)
+
+    def get_options(self):
+        return {'iDisplayLength': 20}
 
 
 class LWTCodeCol(Col):
@@ -141,11 +223,6 @@ class Counterparts(Values):
         return res
 
 
-class IdCol(Col):
-    def order(self):
-        return WoldLanguage.pk
-
-
 class WoldLanguages(Languages):
 
     def base_query(self, query):
@@ -155,7 +232,7 @@ class WoldLanguages(Languages):
 
     def col_defs(self):
         return [
-            IdCol(self, 'id'),
+            IntegerIdCol(self, 'id'),
             LinkCol(self, 'name', route_name='language'),
             Col(self, 'family'),
             VocabularyCol(self, 'vocabulary', get_object=lambda i: i.vocabulary),
@@ -222,3 +299,12 @@ class Meanings(Parameters):
             MeaningScoreCol(self, 'age_score'),
             MeaningScoreCol(self, 'simplicity_score'),
         ]
+
+
+def includeme(config):
+    config.register_datatable('units', Words)
+    config.register_datatable('values', Counterparts)
+    config.register_datatable('languages', WoldLanguages)
+    config.register_datatable('contributors', Authors)
+    config.register_datatable('contributions', Vocabularies)
+    config.register_datatable('parameters', Meanings)

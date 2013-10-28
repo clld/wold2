@@ -1,1 +1,208 @@
-a.Unit {font-style: italic !important;}
+.Unit {font-style: italic !important;}
+
+.navbar-inner {
+  min-height: 40px;
+  padding-left: 20px;
+  padding-right: 20px;
+    background: #009ee0; /* Old browsers */
+    background: -moz-linear-gradient(top, #009ee0 0%, #0076dd 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#009ee0), color-stop(100%,#0076dd)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #009ee0 0%,#0076dd 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #009ee0 0%,#0076dd 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #009ee0 0%,#0076dd 100%); /* IE10+ */
+    background: linear-gradient(to bottom, #009ee0 0%,#0076dd 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#009ee0', endColorstr='#0076dd',GradientType=0 ); /* IE6-9 */
+  border: 1px solid #4c621e;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
+  -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
+  *zoom: 1;
+}
+.navbar-text {
+  margin-bottom: 0;
+  line-height: 40px;
+  color: #ffffff;
+}
+.navbar-link {
+  color: #ffffff;
+}
+.navbar-link:hover {
+  color: #333333;
+}
+
+.navbar-fixed-top .navbar-inner,
+.navbar-static-top .navbar-inner {
+  -webkit-box-shadow: 0 1px 10px rgba(0,0,0,.1);
+  -moz-box-shadow: 0 1px 10px rgba(0,0,0,.1);
+  box-shadow: 0 1px 10px rgba(0,0,0,.1);
+}
+.navbar-fixed-bottom {
+  bottom: 0;
+}
+.navbar-fixed-bottom .navbar-inner {
+  -webkit-box-shadow: 0 -1px 10px rgba(0,0,0,.1);
+  -moz-box-shadow: 0 -1px 10px rgba(0,0,0,.1);
+  box-shadow: 0 -1px 10px rgba(0,0,0,.1);
+}
+.navbar .nav > li > a {
+  float: none;
+  padding: 10px 15px 10px;
+  color: #ffffff;
+  text-decoration: none;
+  text-shadow: 0 1px 0 #009ee0;
+}
+.navbar .nav .dropdown-toggle .caret {
+  margin-top: 8px;
+}
+.navbar .nav > li > a:focus,
+.navbar .nav > li > a:hover {
+  background-color: #aaaea1;
+  color: #1c5577;
+  text-decoration: none;
+}
+.navbar .nav > .active > a,
+.navbar .nav > .active > a:hover,
+.navbar .nav > .active > a:focus {
+  color: #1c5577;
+  text-decoration: none;
+  text-shadow: 0 1px 0 #1c5577;
+  background-color: #d1ccab;
+  -webkit-box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.125);
+  -moz-box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.125);
+  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.125);
+}
+.navbar .nav > li > .dropdown-menu:before {
+  content: '';
+  display: inline-block;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 7px solid #ccc;
+  border-bottom-color: text(0, 0, 0, 0.2);
+  position: absolute;
+  top: -7px;
+  left: 9px;
+}
+.navbar .nav > li > .dropdown-menu:after {
+  content: '';
+  display: inline-block;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-bottom: 6px solid #ffffff;
+  position: absolute;
+  top: -6px;
+  left: 10px;
+}
+.navbar-fixed-bottom .nav > li > .dropdown-menu:before {
+  border-top: 7px solid #ccc;
+  border-top-color: text(0, 0, 0, 0.2);
+  border-bottom: 0;
+  bottom: -7px;
+  top: auto;
+}
+.navbar-fixed-bottom .nav > li > .dropdown-menu:after {
+  border-top: 6px solid #ffffff;
+  border-bottom: 0;
+  bottom: -6px;
+  top: auto;
+}
+.navbar .nav li.dropdown > a:hover .caret {
+  border-top-color: #ffffff;
+  border-bottom-color: #ffffff;
+}
+.navbar .nav li.dropdown.open > .dropdown-toggle,
+.navbar .nav li.dropdown.active > .dropdown-toggle,
+.navbar .nav li.dropdown.open.active > .dropdown-toggle {
+  background-color: #627e26;
+  color: #ffffff;
+}
+.navbar .nav li.dropdown > .dropdown-toggle .caret {
+  border-top-color: #ffffff;
+  border-bottom-color: #ffffff;
+}
+.navbar .nav li.dropdown.open > .dropdown-toggle .caret,
+.navbar .nav li.dropdown.active > .dropdown-toggle .caret,
+.navbar .nav li.dropdown.open.active > .dropdown-toggle .caret {
+  border-top-color: #ffffff;
+  border-bottom-color: #ffffff;
+}
+.navbar .pull-right > li > .dropdown-menu,
+.navbar .nav > li > .dropdown-menu.pull-right {
+  left: auto;
+  right: 0;
+}
+.navbar .pull-right > li > .dropdown-menu:before,
+.navbar .nav > li > .dropdown-menu.pull-right:before {
+  left: auto;
+  right: 12px;
+}
+.navbar .pull-right > li > .dropdown-menu:after,
+.navbar .nav > li > .dropdown-menu.pull-right:after {
+  left: auto;
+  right: 13px;
+}
+.navbar .pull-right > li > .dropdown-menu .dropdown-menu,
+.navbar .nav > li > .dropdown-menu.pull-right .dropdown-menu {
+  left: auto;
+  right: 100%;
+  margin-left: 0;
+  margin-right: -1px;
+  -webkit-border-radius: 6px 0 6px 6px;
+  -moz-border-radius: 6px 0 6px 6px;
+  border-radius: 6px 0 6px 6px;
+}
+
+#contextnavbar .navbar-inner {
+  margin-top: 5px;
+background: #99d8f3; /* Old browsers */
+background: -moz-linear-gradient(top, #99d8f3 0%, #99d8f3 100%); /* FF3.6+ */
+background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#99d8f3), color-stop(100%,#99d8f3)); /* Chrome,Safari4+ */
+background: -webkit-linear-gradient(top, #99d8f3 0%,#99d8f3 100%); /* Chrome10+,Safari5.1+ */
+background: -o-linear-gradient(top, #99d8f3 0%,#99d8f3 100%); /* Opera 11.10+ */
+background: -ms-linear-gradient(top, #99d8f3 0%,#99d8f3 100%); /* IE10+ */
+background: linear-gradient(to bottom, #99d8f3 0%,#99d8f3 100%); /* W3C */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#99d8f3', endColorstr='#99d8f3',GradientType=0 ); /* IE6-9 */
+
+  border-bottom: 1px solid #eee;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.065);
+  -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.065);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.065);
+  *zoom: 1;
+}
+
+#contextnavbar .navbar-link {
+  color: #333333;
+}
+#contextnavbar .navbar-link:hover {
+  color: #111;
+}
+#contextnavbar .nav > li > a {
+  color: #333333;
+  text-shadow: none;
+}
+#contextnavbar .nav > li > a:focus,
+#contextnavbar .nav > li > a:hover {
+  background-color: #d1ccab;
+  color: #111;
+}
+#contextnavbar .nav > .active > a,
+#contextnavbar .nav > .active > a:hover,
+#contextnavbar .nav > .active > a:focus {
+  color: #333333;
+  text-decoration: none;
+  background-color: #d1ccab;
+  -webkit-box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.125);
+  -moz-box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.125);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.125);
+}
+
+#banner {
+    margin-top: 5px;
+    margin-left: 5px;
+    margin-bottom: 5px;
+}
