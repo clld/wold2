@@ -43,6 +43,7 @@ def main(global_config, **settings):
     settings['route_patterns'] = {
         'languages': '/language',
         'language': '/language/{id:[^/\.]+}',
+        'unit': '/word/{id:[^/\.]+}',
         'parameters': '/meaning',
         'parameter': '/meaning/{id:[^/\.]+}',
         'contributions': '/vocabulary',
@@ -71,5 +72,5 @@ def main(global_config, **settings):
         ILanguage,
         IIndex,
         WoldGeoJsonLanguages.mimetype)
-
+    config.add_route('terms', '/terms')
     return config.make_wsgi_app()

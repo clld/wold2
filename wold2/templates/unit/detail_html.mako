@@ -7,10 +7,10 @@
 % if ctx.language and ctx.language.vocabulary:
     <% desc = ctx.language.vocabulary.jsondatadict.get('fd_' + u.property_name(name)) %>
     <td>${u.infobutton(desc, placement=placement)}</td>
-    <th>${u.property_label(name)}</th>
+    <th>${u.property_label(name)}:</th>
 % else:
     <td> </td>
-    <th>${u.property_label(name)}</th>
+    <th>${u.property_label(name)}:</th>
 % endif
 </%def>
 
@@ -36,38 +36,19 @@
 <%def name="sidebar()">
     <%util:well title="Loanword Information">
     % if ctx.counterparts:
-<table class="table table-condensed">
+<table class="table table-condensed table-nonfluid">
     <tbody>
         ${tr_property('borrowed', placement='left')}
         ${tr_property('comment_on_borrowed', placement='left')}
         % if ctx.source_word_assocs:
         <%self:tr_property name="source_words" with_body="${True}">
-            <ul class="unstyled">
-            % for loan in ctx.source_word_assocs:
-                <li>
-                % if loan.source_word.name == 'Unidentifiable' and not loan.source_word.language and not loan.source_word.description:
-                    unidentifiable
-                % else:
-                    ${h.link(request, loan.source_word)}
-                    % if loan.source_word.description and loan.source_word.description != '?':
-                    '${loan.source_word.description}'
-                    % endif
-                    % if loan.source_word.language:
-                    from ${h.link(request, loan.source_word.language)}
-                    % endif
-                    % if not loan.certain:
-                    (uncertain)
-                    % endif
-                % endif
-                </li>
-            % endfor
-            </ul>
+            ${u.source_words(request, ctx)}
         </%self:tr_property>
         % endif
         ${tr_property('effect', placement='left')}
         ${tr_property('salience', placement='left')}
         % if ctx.contact_situation:
-        <%self:tr_property name="contact_situation" with_body="${True}">
+        <%self:tr_property name="contact_situation" with_body="${True}" placement="left">
             ${u.infobutton(ctx.contact_situation.unitdomainelement.description, placement='left')}
             ${ctx.contact_situation.unitdomainelement.name}
         </%self:tr_property>
@@ -76,7 +57,11 @@
 </table>
     % else:
         <p>Source for the following loanwords:</p>
-        ${util.dl_table(*[(h.link(request, loan.target_word), h.link(request, loan.target_word.language.vocabulary)) for loan in ctx.target_word_assocs])}
+        <ul class="unstyled">
+            % for loan in ctx.target_word_assocs:
+            <li>${h.link(request, loan.target_word)} (${h.link(request, loan.target_word.language.vocabulary)})</li>
+            % endfor
+        </ul>
     % endif
     </%util:well>
 </%def>
@@ -90,15 +75,14 @@
 </div>
 % endif
 
-##<div class="span6">
-<table class="table">
+<table class="table table-nonfluid">
     <tbody>
         ${tr_property('name')}
         ${tr_property('original_script')}
         % if ctx.counterparts:
         <tr>
             <td> </td>
-            <th>LWT meaning(s)</th>
+            <th>LWT meaning(s):</th>
             <td>
                 <ul class="inline">
                 % for c in ctx.counterparts:
@@ -110,7 +94,7 @@
         % elif ctx.language:
         <tr>
             <td> </td>
-            <th>Language</th>
+            <th>Language:</th>
             <td>${h.link(request, ctx.language)}</td>
         </tr>
         % endif
@@ -133,24 +117,6 @@
             % endif
         </%self:tr_property>
         % endif
-	  ##<tr>
-	  ##  ${th_property(word.vocabulary, 'fd_age', word.property_label('age'))}
-	  ##  <!--
-	    ##TODO: turn age label into link to help balloon showing the specific description
-	    ##from the fd_age field of the vocabulary?
-	    ##or get the stuff out of the ages table?
-	    ##-->
-	    ##<td>
-	      ##<div py:strip="" py:if="word.age.description">
-		##<div id="hb_age_description" class="help-ballon-content">${word.age.description}</div>
-		##${help_balloon(word.age.label, 'hb_age_description', label=word.age.label)}
-	      ##</div>
-	      ##<div py:strip="" py:if="not word.age.description">
-		##${word.age.label}
-	      ##</div>
-	      ##<span py:if="word.age.start_year">(${word.age.start_year}<span py:if="word.age.end_year">&ndash;${word.age.end_year}</span>)</span>
-	    ##</td>
-	  ##</tr>
         ${tr_property('lexical_stratum')}
         ${tr_property('year')}
         ${tr_property('comparison_with_mandarin')}
@@ -169,7 +135,6 @@
         ${tr_property('relative_frequency')}
     </tbody>
 </table>
-##</div>
 <script>
 $(document).ready(function() {
     $('.fieldinfo').clickover({'html': true});

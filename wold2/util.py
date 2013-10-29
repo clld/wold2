@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from cgi import escape
 
 from sqlalchemy.orm import aliased
@@ -30,7 +31,7 @@ this meaning. The following {name}s are assigned to
 words depending on {description}:""".format(**locals())),
         HTML.table(
             HTML.thead(HTML.tr(
-                HTML.th('&nbsp;'), HTML.th('score'))),
+                HTML.th(' '), HTML.th('score'))),
             HTML.tbody(
                 *[HTML.tr(HTML.td(label), HTML.td(score)) for label, score in domain])))
 
@@ -154,3 +155,44 @@ def get_related_languages_geojson(ctx, req, langs):
         features.append(make_feature(lang, req.params.get('t') == 'donor'))
 
     return {'type': 'FeatureCollection', 'properties': {}, 'features': features}
+
+
+def source_words(req, ctx):
+    def _format(loan):
+        if loan.source_word.name == 'Unidentifiable' and not loan.source_word.language and not loan.source_word.description:
+            yield 'unidentifiable'
+        else:
+            yield link(req, loan.source_word)
+            if loan.source_word.description and loan.source_word.description != '?':
+                yield " '%s'" % loan.source_word.description
+            if loan.source_word.language:
+                yield ' '
+                yield link(req, loan.source_word.language)
+            if not loan.certain:
+                yield ' (uncertain)'
+
+    return HTML.ul(
+        *[HTML.li(*list(_format(loan))) for loan in ctx.source_word_assocs],
+        class_="unstyled")
+
+
+def term_link(req, term, label=None):
+    parts = term.split()
+    if len(parts) > 1:
+        # term contains white-space!
+        label = label or term
+        term = '_'.join(parts)
+    else:
+        label = label or term.replace('_', ' ')
+    term = term.lower()
+    return HTML.a(
+        label,
+        title="lookup '{0}' in the glossary".format(term.replace('_', ' ')),
+        href=req.route_url('terms', _anchor=term))
+
+
+def home_link(req, label=None):
+    return HTML.a(
+        label or req.dataset.description,
+        title=req.dataset.description,
+        href=req.resource_url(req.dataset))

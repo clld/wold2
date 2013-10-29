@@ -339,6 +339,12 @@ def prime_cache(args):
             .filter(models.Word.borrowed_score != None)
         vocab.count_words = words.count()
         vocab.borrowed_score = sum(score[0] for score in words) / float(vocab.count_words)
+        vocab.count_core_list_counterparts = DBSession.query(models.Counterpart)\
+            .join(common.Value.valueset)\
+            .join(common.ValueSet.parameter)\
+            .filter(common.ValueSet.contribution_pk == vocab.pk)\
+            .filter(models.Meaning.core_list == True)\
+            .count()
 
     for meaning in DBSession.query(models.Meaning):
         meaning.representation = DBSession.query(models.Counterpart)\

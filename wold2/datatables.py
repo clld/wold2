@@ -20,6 +20,7 @@ from clld.db.util import get_distinct_values
 from wold2.models import (
     Loan, Word, Counterpart, WoldLanguage, Vocabulary, Meaning, SemanticField,
 )
+from wold2.util import source_words, hb_borrowed_score, hb_age_score, hb_simplicity_score
 
 
 class RelationCol(Col):
@@ -42,7 +43,6 @@ class RelWordsCol(Col):
                else item.target_word_assocs
         attr = 'source_word' if self.dt.type == 'donor' else 'target_word'
         return ', '.join([link(self.dt.req, getattr(l, attr)) for l in coll if getattr(l, attr).language == self.dt.language])
-
 
 
 class Words(Units):
@@ -103,7 +103,12 @@ class Words(Units):
 class LWTCodeCol(Col):
     """special handling for lwt code
     """
-    __kw__ = {'sTitle': 'LWT code'}
+    __kw__ = {
+        'sTitle': 'LWT code',
+        'sDescription': "The Loanword Typology code is the identifier of the Loanword "
+        "Typology meaning. Sorting by LWT Code sorts the words thematically by semantic "
+        "field.",
+    }
 
     def format(self, item):
         return self.get_obj(item).id.replace('-', '.')
@@ -160,6 +165,19 @@ class VocabularyCol(LinkCol):
         return ''
 
 
+class SourceWordsCol(Col):
+    def format(self, item):
+        return source_words(self.dt.req, item.word)
+
+
+class CoreListCol(Col):
+    __kw__ = dict(
+        model_col=Meaning.core_list,
+        sFilter='True',
+        sDescription="This column indicates whether the word is a counterpart "
+        "for one of the 1460 core LWT meanings.")
+
+
 class Counterparts(Values):
     """Lists of counterparts
     """
@@ -176,8 +194,11 @@ class Counterparts(Values):
 
         if self.contribution:
             # list "words" of a vocabulary
-            query = query.join(common.ValueSet.parameter)
-            return query.filter(common.ValueSet.contribution_pk == self.contribution.pk)
+            return query.join(common.ValueSet.parameter)\
+                .filter(common.ValueSet.contribution_pk == self.contribution.pk)\
+                .options(
+                    joinedload_all(Counterpart.word, Word.source_word_assocs),
+                    joinedload_all(common.Value.valueset, common.ValueSet.parameter))
 
         return query
 
@@ -191,36 +212,80 @@ class Counterparts(Values):
         get_word = lambda item: item.word
         get_vocabulary = lambda item: item.valueset.contribution
         get_meaning = lambda item: item.valueset.parameter
+        word_form_col = LinkCol(
+            self, 'word_form',
+            model_col=Word.name,
+            get_object=get_word,
+            sDescription="<p>The word is given in the usual orthography or "
+            "transcription, and in the usual citation form.</p><p>Click on a word to "
+            "get more information than is shown in this table.</p>")
+        borrowed_col = Col(
+            self, 'borrowed',
+            model_col=Word.borrowed,
+            get_object=get_word,
+            choices=get_distinct_values(Word.borrowed),
+            sDescription="<p>There are five borrowed statuses, reflecting decreasing "
+            "likelihood that the word is a loanword:</p><ol>"
+            "<li>clearly borrowed</li><li>probably borrowed</li><li>perhaps borrowed</li>"
+            "<li>very little evidence for borrowing</li>"
+            "<li>no evidence for borrowing</li></ol>")
 
-        res = []
         if self.parameter:
-            res.append(IntegerIdCol(
-                self, 'vocid',
-                sTitle='Voc. ID',
-                model_col=common.Contribution.id,
-                get_object=get_vocabulary))
-            res.append(VocabularyCol(self, 'vocabulary', get_object=get_vocabulary))
-
-        res.append(LinkCol(
-            self, 'word_form', model_col=Word.name, get_object=get_word))
-
+            return [
+                IntegerIdCol(
+                    self, 'vocid',
+                    sTitle='Voc. ID',
+                    model_col=common.Contribution.id,
+                    get_object=get_vocabulary,
+                    sDescription="The vocabulary ID corresponds to the ordering to the "
+                    "chapters on the book <em>Loanwords in the World's Languages</em>. "
+                    "Languages are listed in rough geographical order from west to east, "
+                    "from Africa via Europe to Asia and the Americas, so that "
+                    "geographically adjacent languages are next to each other."),
+                VocabularyCol(self, 'vocabulary', get_object=get_vocabulary),
+                word_form_col,
+                borrowed_col,
+                CounterpartScoreCol(self, 'borrowed_score'),
+                CounterpartScoreCol(self, 'age_score'),
+                CounterpartScoreCol(self, 'simplicity_score'),
+            ]
         if self.contribution:
-            res.append(LWTCodeCol(self, 'lwt_code', get_object=get_meaning))
-            res.append(LinkCol(
-                self, 'meaning', model_col=common.Parameter.name, get_object=get_meaning))
+            return [
+                word_form_col,
+                LWTCodeCol(
+                    self, 'lwt_code',
+                    get_object=get_meaning),
+                LinkCol(
+                    self, 'meaning',
+                    model_col=common.Parameter.name,
+                    get_object=get_meaning,
+                    sDescription="This column shows the labels of the Loanword Typology "
+                    "meanings. By clicking on a meaning label, you get more information "
+                    "about the meaning, as well as a list of all words that are "
+                    "counterparts of that meaning."),
+                CoreListCol(self, 'core_list', get_object=get_meaning),
+                borrowed_col,
+                SourceWordsCol(
+                    self, 'source_words',
+                    bSearchable=False,
+                    bSortable=False,
+                    sDescription="For (possible) loanwords, this column shows the words "
+                    "in the source languages that served as models."),
+            ]
 
-        res.extend([
-            # original script
-            Col(self, 'borrowed',
-                model_col=Word.borrowed,
-                get_object=get_word,
-                choices=get_distinct_values(Word.borrowed)),
-            CounterpartScoreCol(self, 'borrowed_score'),
-            CounterpartScoreCol(self, 'age_score'),
-            CounterpartScoreCol(self, 'simplicity_score'),
-            # source words
-        ])
-        return res
+        return []
+
+"""
+    <div id="hb_period" class="help-ballon-content">
+      This is the time period during which the word is hypothesized to have come into the
+      language as a loanword, or during which it is first attested, or for which it can be reconstructed.
+    </div>
+
+    <div id="hb_original_script" class="help-ballon-content">
+      This gives the usual written form for languages that do not use the Latin script.
+    </div>
+
+"""
 
 
 class WoldLanguages(Languages):
@@ -232,9 +297,9 @@ class WoldLanguages(Languages):
 
     def col_defs(self):
         return [
-            IntegerIdCol(self, 'id'),
-            LinkCol(self, 'name', route_name='language'),
-            Col(self, 'family'),
+            IntegerIdCol(self, 'id', sTitle='ID'),
+            LinkCol(self, 'language_name', route_name='language'),
+            Col(self, 'language_family', model_col=WoldLanguage.affiliation),
             VocabularyCol(self, 'vocabulary', get_object=lambda i: i.vocabulary),
         ]
 
@@ -255,11 +320,43 @@ class Vocabularies(Contributions):
     def col_defs(self):
         return [
             # ID, Vocabulary, Authors, Number of words, Percentage of loanwords, cite
-            IntegerIdCol(self, 'id'),
-            VocabularyCol(self, 'vocabulary'),
-            ContributorsCol(self, 'contributor'),
-            Col(self, '#', sDescription='Number of words', sClass='right', model_col=Vocabulary.count_words),
-            PercentCol(self, '%', sDescription='Percentage of loanwords', model_col=Vocabulary.borrowed_score),
+            IntegerIdCol(
+                self, 'id',
+                sTitle="ID",
+                sDescription="The vocabulary ID number corresponds to the ordering to the "
+                "chapters on the book <em>Loanwords in the World's Languages</em>. "
+                "Languages are listed in rough geographical order from west to east, "
+                "from Africa via Europe to Asia and the Americas, so that "
+                "geographically adjacent languages are next to each other."),
+            VocabularyCol(
+                self, 'vocabulary',
+                sDescription="<p>Each vocabulary of WOLD is a separate electronic "
+                "publication with a separate author or team of authors. Each vocabulary "
+                "has a characteristic colour in WOLD.</p><p>Click on a vocabulary to "
+                "see the words (loanwords and nonloanwords) and their properties.</p>"),
+            ContributorsCol(
+                self, 'contributor',
+                sDescription="The authors are experts of the language and its history. "
+                "They also contributed a prose chapter on the borrowing situation in "
+                "their language that was published in the book "
+                "Loanwords in the World's Languages."),
+            Col(self, 'n',
+                sTitle='Number of words',
+                model_col=Vocabulary.count_words,
+                sDescription="There would be 1814 words in each vocabulary, "
+                "corresponding to the 1814 Loanword Typology meanings, if each meaning "
+                "had exactly one counterpart, and if all the counterparts were "
+                "different words. But many (\"polysomous\") words are counterparts of "
+                "several meanings, many meanings have several word counterparts "
+                "(\"synonyms\", or \"subcounterparts\"), and many meanings have no "
+                "counterparts at all, so the number of words in each database varies "
+                "considerably."),
+            PercentCol(
+                self, 'p',
+                sTitle='Percentage of loanwords',
+                model_col=Vocabulary.borrowed_score,
+                sDescription="This gives the percentage of words in each language that "
+                "are \"clearly borrowed\" or \"probably borrowed\"."),
             CitationCol(self, 'cite'),
         ]
 
@@ -292,12 +389,23 @@ class Meanings(Parameters):
             # LWT code, Meaning, Semantic category, Semantic field, borrowed/age/simplicity score, Representation,
             LWTCodeCol(self, 'lwt_code'),
             LinkCol(self, 'name', sTitle='Meaning'),
+            CoreListCol(self, 'core_list'),
             Col(self, 'cat', sTitle='Semantic category',
                 model_col=Meaning.semantic_category, choices=get_distinct_values(Meaning.semantic_category)),
             SemanticFieldCol(self, 'sf', sTitle='Semantic field'),
-            MeaningScoreCol(self, 'borrowed_score'),
-            MeaningScoreCol(self, 'age_score'),
-            MeaningScoreCol(self, 'simplicity_score'),
+            MeaningScoreCol(
+                self, 'borrowed_score', sDescription=unicode(hb_borrowed_score())),
+            MeaningScoreCol(
+                self, 'age_score', sDescription=unicode(hb_age_score())),
+            MeaningScoreCol(
+                self, 'simplicity_score', sDescription=unicode(hb_simplicity_score())),
+            Col(self, 'representation',
+                model_col=Meaning.representation,
+                sDescription="This column shows how many counterparts for this meaning "
+                "there are in the 41 languages. The number can be higher than 41 because "
+                "a language may have several counterparts for one meaning (\"synonyms\"),"
+                " and it may be lower than 41, because not all languages may have a "
+                "counterpart for a meaning. "),
         ]
 
 

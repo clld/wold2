@@ -2,13 +2,9 @@
 <%namespace name="util" file="../util.mako"/>
 
 
-<h2>Meaning ${ctx.id}: ${ctx.name}</h2>
+<h2>Meaning ${ctx.id.replace('-', '.')}: ${ctx.name}</h2>
 
-<div class="row-fluid">
-<div class="span8">
 ${util.dl_table(*list(u.get_meaning_properties(request, ctx)))}
-</div>
-</div>
 
 <ul class="nav nav-pills pull-right">
     <li><a href="#map-container">Map</a></li>

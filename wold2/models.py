@@ -118,6 +118,7 @@ class Vocabulary(Contribution, CustomModelMixin):
     pk = Column(Integer, ForeignKey('contribution.pk'), primary_key=True)
     count_words = Column(Integer)
     borrowed_score = Column(Float)
+    count_core_list_counterparts = Column(Integer)
     color = Column(String)
 
 
@@ -153,7 +154,6 @@ class Meaning(Parameter, CustomModelMixin, ScoreMixin):
     #Column('german', Unicode())
     #Column('russian', Unicode())
     core_list = Column(Boolean)
-
 
     Column('french', Unicode()),
     Column('spanish', Unicode()),
