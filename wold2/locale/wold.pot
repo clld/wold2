@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: wold2 0.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-10-22 10:46+0200\n"
+"POT-Creation-Date: 2013-10-30 13:06+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,27 +17,31 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
-#: wold2/__init__.py:10
+#: wold2/__init__.py:12
 msgid "Contribution"
 msgstr ""
 
-#: wold2/__init__.py:11
+#: wold2/__init__.py:13
 msgid "Contributions"
 msgstr ""
 
-#: wold2/__init__.py:12
+#: wold2/__init__.py:14
 msgid "Contributor"
 msgstr ""
 
-#: wold2/__init__.py:13
+#: wold2/__init__.py:15
 msgid "Contributors"
 msgstr ""
 
-#: wold2/__init__.py:14
+#: wold2/__init__.py:16
 msgid "Parameter"
 msgstr ""
 
-#: wold2/__init__.py:15
+#: wold2/__init__.py:17
 msgid "Parameters"
+msgstr ""
+
+#: wold2/__init__.py:18
+msgid "Terms"
 msgstr ""
 

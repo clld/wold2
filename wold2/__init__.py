@@ -15,6 +15,7 @@ _('Contributor')
 _('Contributors')
 _('Parameter')
 _('Parameters')
+_('Terms')
 
 
 class WoldMapMarker(MapMarker):
@@ -72,5 +73,4 @@ def main(global_config, **settings):
         ILanguage,
         IIndex,
         WoldGeoJsonLanguages.mimetype)
-    config.add_route('terms', '/terms')
     return config.make_wsgi_app()
