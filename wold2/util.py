@@ -81,7 +81,7 @@ def get_meaning_properties(req, ctx):
         label = attr.capitalize().replace('_', ' ')
         if info:
             label = HTML.span(
-                infobutton(info, content_type='html'), literal('&nbsp;'), label)
+                label, literal('&nbsp;'), infobutton(info, content_type='html'))
         yield (label, converter(getattr(ctx, attr)))
 
 

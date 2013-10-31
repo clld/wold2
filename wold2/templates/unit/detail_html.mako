@@ -4,14 +4,13 @@
 
 
 <%def name="th_property(name, placement='right')">
-% if ctx.language and ctx.language.vocabulary:
-    <% desc = ctx.language.vocabulary.jsondatadict.get('fd_' + u.property_name(name)) %>
-    <td>${u.infobutton(desc, placement=placement)}</td>
-    <th>${u.property_label(name)}:</th>
-% else:
-    <td> </td>
-    <th>${u.property_label(name)}:</th>
-% endif
+    <td>
+        <strong>${u.property_label(name)}</strong>
+    % if ctx.language and ctx.language.vocabulary:
+        <% desc = ctx.language.vocabulary.jsondatadict.get('fd_' + u.property_name(name)) %>
+        ${u.infobutton(desc, placement=placement)}
+    % endif
+    </td>
 </%def>
 
 
@@ -49,8 +48,8 @@
         ${tr_property('salience', placement='left')}
         % if ctx.contact_situation:
         <%self:tr_property name="contact_situation" with_body="${True}" placement="left">
-            ${u.infobutton(ctx.contact_situation.unitdomainelement.description, placement='left')}
             ${ctx.contact_situation.unitdomainelement.name}
+            ${u.infobutton(ctx.contact_situation.unitdomainelement.description, placement='left')}
         </%self:tr_property>
         % endif
     </tbody>
@@ -81,8 +80,7 @@
         ${tr_property('original_script')}
         % if ctx.counterparts:
         <tr>
-            <td> </td>
-            <th>LWT meaning(s):</th>
+            <td><strong>LWT meaning(s)</strong></td>
             <td>
                 <ul class="inline">
                 % for c in ctx.counterparts:
