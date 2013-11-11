@@ -91,7 +91,6 @@
         </tr>
         % elif ctx.language:
         <tr>
-            <td> </td>
             <th>Language:</th>
             <td>${h.link(request, ctx.language)}</td>
         </tr>
