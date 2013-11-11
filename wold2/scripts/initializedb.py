@@ -50,7 +50,7 @@ def main(args):
         published=date(2009, 8, 15),
         license='http://creativecommons.org/licenses/by-sa/3.0/',
         #license='http://creativecommons.org/licenses/by-nc-nd/2.0/de/deed.en',
-        contact='wold@eva.mpg.de',
+        contact='ontact.wold@livingreviews.org',
         jsondata={
             'license_icon': 'http://i.creativecommons.org/l/by-sa/3.0/88x31.png',
             'license_name': 'Creative Commons Attribution-ShareAlike 3.0 Unported License'})
