@@ -2,11 +2,14 @@ from __future__ import unicode_literals
 from datetime import date
 
 from sqlalchemy import create_engine
+from path import path
+from pylab import figure, axes, pie, savefig
 
 from clld.scripts.util import initializedb, Data
 from clld.db.meta import DBSession
 from clld.db.models import common
 
+import wold2
 from wold2 import models
 
 
@@ -331,7 +334,14 @@ def prime_cache(args):
     #
     # add precalculated scores for meanings and semantic fields:
     #
+    icons_dir = path(wold2.__file__).dirname().joinpath('static')
     for vocab in DBSession.query(models.Vocabulary):
+        figure(figsize=(0.4, 0.4))
+        axes([0.1, 0.1, 0.8, 0.8])
+        coll = pie((100,), colors=('#' + vocab.color,))
+        coll[0][0].set_linewidth(0.5)
+        savefig(icons_dir.joinpath('%s.png' % vocab.color), transparent=True)
+
         words = DBSession.query(models.Word.borrowed_score)\
             .join(common.Unit.language)\
             .join(models.WoldLanguage.vocabulary)\

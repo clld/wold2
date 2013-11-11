@@ -1,5 +1,5 @@
 from clld.web.app import get_configurator, MapMarker
-from clld.interfaces import ILanguage, IIndex, IParameter, IMapMarker
+from clld.interfaces import ILanguage, IIndex, IParameter, IMapMarker, IValue, IValueSet
 from clld.web.adapters.base import Index, adapter_factory
 
 from wold2.maps import LanguagesMap, LanguageMap, MeaningMap
@@ -21,13 +21,11 @@ _('Terms')
 class WoldMapMarker(MapMarker):
     def __call__(self, ctx, req):
         c = None
-        #if interfaces.IValueSet.providedBy(ctx):
-        #    if req.matched_route.name == 'valueset' and not ctx.parameter.multivalued:
-        #        return ''
-        #    icon = ctx.jsondata['icon']
+        if IValueSet.providedBy(ctx):
+            return req.static_url('wold2:static/%s.png' % ctx.contribution.color)
 
-        #if interfaces.IValue.providedBy(ctx):
-        #    icon = ctx.domainelement.jsondata['icon']
+        if IValue.providedBy(ctx):
+            return req.static_url('wold2:static/%s.png' % ctx.valueset.contribution.color)
 
         if ILanguage.providedBy(ctx):
             c = 'ddd0000' if ctx.vocabulary else 'c4d6cee'
