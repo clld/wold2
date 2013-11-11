@@ -25,7 +25,11 @@ from wold2.util import source_words, hb_borrowed_score, hb_age_score, hb_simplic
 
 
 class RelationCol(Col):
-    __kw__ = {'choices': ['immediate', 'earlier']}
+    __kw__ = {
+        'choices': ['immediate', 'earlier'],
+        'sDescription': "Whether a word was contributed directly (immediate) or "
+        " indirectly (earlier), i.e. via another, intermediate donor languoid, to "
+        "the recipient language."}
 
     def search(self, qs):
         return Loan.relation == qs
@@ -81,15 +85,36 @@ class Words(Units):
     def col_defs(self):
         lang = self.Recipient if self.type == 'donor' else self.Donor
         ltitle = 'Recipient language' if self.type == 'donor' else 'Donor languoid'
+        ldesc = {
+            'donor': "These are the names of languages and families from which the "
+            "recipient language borrowed words directly or indirectly.",
+            'recipient': "These are the names of recipient languages that borrowed words "
+            "directly or indirectly from this languoid."}[self.type]
+        w1desc = {
+            'donor': "%s words contributed to other languages." % self.language.name,
+            'recipient': "%s words borrowed from other languages." % self.language.name,
+        }[self.type]
+        w2desc = {
+            'donor': "Words borrowed from %s." % self.language.name,
+            'recipient': "Words contributed to %s." % self.language.name,
+        }[self.type]
         res = [
             RelWordsCol(
                 self,
                 'self',
                 sTitle='Borrowed words' if self.type !='donor' else 'Source words',
+                sDescription=w1desc,
                 model_col=self.SourceWord.name if self.type == 'donor' else self.TargetWord.name),
             RelationCol(self, 'relation'),
-            LinkCol(self, 'language', sTitle=ltitle, get_obj=lambda i: i.language, model_col=lang.name),
-            LinkCol(self, 'other', model_col=common.Unit.name, sTitle='Borrowed word' if self.type =='donor' else 'Source word'),
+            LinkCol(
+                self, 'language',
+                sTitle=ltitle, sDescription=ldesc,
+                get_obj=lambda i: i.language, model_col=lang.name),
+            LinkCol(
+                self, 'other',
+                model_col=common.Unit.name,
+                sTitle='Borrowed word' if self.type =='donor' else 'Source word',
+                sDescription=w2desc),
             LinkToMapCol(self, 'm', get_obj=lambda i: i.language, map_id=self.type + '-map'),
         ]
         return res
@@ -221,7 +246,7 @@ class Counterparts(Values):
             "transcription, and in the usual citation form.</p><p>Click on a word to "
             "get more information than is shown in this table.</p>")
         borrowed_col = Col(
-            self, 'borrowed',
+            self, 'borrowed', sTitle='Borrowed status',
             model_col=Word.borrowed,
             get_object=get_word,
             choices=get_distinct_values(Word.borrowed),
@@ -299,9 +324,18 @@ class WoldLanguages(Languages):
     def col_defs(self):
         return [
             IntegerIdCol(self, 'id', sTitle='ID'),
-            LinkCol(self, 'language_name', route_name='language'),
-            Col(self, 'language_family', model_col=WoldLanguage.affiliation),
-            VocabularyCol(self, 'vocabulary', get_object=lambda i: i.vocabulary),
+            LinkCol(
+                self, 'language_name', route_name='language',
+                sDescription="This is the name of the language (or family, in the case "
+                "of donor languages) that was adopted in the World Loanword Database. "
+                "Alternative names can be found on the individual language pages."),
+            Col(self, 'language_family', model_col=WoldLanguage.affiliation,
+                sDescription="This is the name of the highest family that is generally "
+                "accepted to which the language belongs. "),
+            VocabularyCol(
+                self, 'vocabulary', get_object=lambda i: i.vocabulary,
+                sDescription="For recipient languages, this column shows the "
+                "corresponding vocabulary."),
         ]
 
 
@@ -398,11 +432,28 @@ class Meanings(Parameters):
         return [
             # LWT code, Meaning, Semantic category, Semantic field, borrowed/age/simplicity score, Representation,
             LWTCodeCol(self, 'lwt_code'),
-            LinkCol(self, 'name', sTitle='Meaning'),
+            LinkCol(
+                self, 'name', sTitle='Meaning',
+                sDescription="This column shows the labels of the Loanword Typology "
+                "meanings. By clicking on a meaning label, you get more information "
+                "about the meaning, as well as a list of all words that are counterparts "
+                "of that meaning."),
             CoreListCol(self, 'core_list'),
             Col(self, 'cat', sTitle='Semantic category',
-                model_col=Meaning.semantic_category, choices=get_distinct_values(Meaning.semantic_category)),
-            SemanticFieldCol(self, 'sf', sTitle='Semantic field'),
+                sDescription="Meanings were assigned to semantic categories with "
+                "word-class-like labels: nouns, verbs, adjectives, adverbs, function "
+                "words. No claim is made about the grammatical behavior of words "
+                "corresponding to these meanings. The categories are intended to be "
+                "purely semantic.",
+                model_col=Meaning.semantic_category,
+                choices=get_distinct_values(Meaning.semantic_category)),
+            SemanticFieldCol(
+                self, 'sf', sTitle='Semantic field',
+                sDescription="The first 22 fields are the fields of the Intercontinental "
+                "Dictionary Series meaning list, proposed by Mary Ritchie Key, and "
+                "ultimately based on Carl Darling Buck's (1949) Dictionary of selected "
+                "synonyms in the principal Indo-European languages. The other two fields "
+                "were added for the Loanword Typology project."),
             MeaningScoreCol(
                 self, 'borrowed_score', sDescription=unicode(hb_borrowed_score())),
             MeaningScoreCol(
