@@ -9,7 +9,7 @@
     ${h.external_link("http://lingweb.eva.mpg.de/jakarta/uri.php", label="Uri Tadmor")}, is a
     scientific publication by the
     ${h.external_link(request.dataset.publisher_url, label=request.dataset.publisher_name)},
-    ${request.dataset.publisher_place} (2009).
+    ${request.dataset.publisher_place} (2009). ${h.cite_button(request, ctx)}
 </p>
 <p>
     It provides
@@ -25,7 +25,7 @@
 </p>
 <p>
     Each vocabulary was contributed by an expert on the language and its history. An accompanying
-    book is being published by Mouton de Gruyter
+    book has been published by De Gruyter Mouton
     (${h.external_link("http://www.degruyter.com/view/product/41172?rskey=XDsyHr&result=5", label="Loanwords in the World's Languages: A Comparative Handbook, edited by Martin Haspelmath & Uri Tadmor")}).
 </p>
 <p>
