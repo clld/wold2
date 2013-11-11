@@ -9,6 +9,7 @@ from clld.util import dict_merged
 from clld.web.datatables import Values, Languages, Contributors
 from clld.web.datatables.base import Col, LinkCol, PercentCol, IntegerIdCol, LinkToMapCol
 from clld.web.datatables.contribution import Contributions, CitationCol, ContributorsCol
+from clld.web.datatables import contributor
 from clld.web.datatables.unit import Units
 from clld.web.datatables.parameter import Parameters
 from clld.web.util.htmllib import HTML
@@ -304,16 +305,25 @@ class WoldLanguages(Languages):
         ]
 
 
-class Authors(Contributors):
+class Authors(contributor.Contributors):
     """In WOLD, the contributors table does also list the address.
     """
     def col_defs(self):
-        class AddressCol(Col):
+        class ContributionsCol(contributor.ContributionsCol):
             def format(self, item):
-                return text2html(item.address)
+                return HTML.ul(
+                    *[HTML.li(
+                        link(self.dt.req, c.contribution),
+                        style="background-color: #%s;" % c.contribution.color,
+                        class_='dt-full-cell') for c in item.contribution_assocs],
+                    class_='nav nav-pills nav-stacked')
 
-        res = Contributors.col_defs(self)
-        return [res[0]] + [AddressCol(self, 'address')] + res[1:]
+        return [
+            contributor.NameCol(self, 'name'),
+            ContributionsCol(self, 'Contributions'),
+            contributor.AddressCol(self, 'address'),
+            contributor.UrlCol(self, 'Homepage'),
+        ]
 
 
 class Vocabularies(Contributions):
