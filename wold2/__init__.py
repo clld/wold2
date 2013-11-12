@@ -1,6 +1,8 @@
 from clld.web.app import get_configurator, MapMarker
 from clld.interfaces import ILanguage, IIndex, IParameter, IMapMarker, IValue, IValueSet
 from clld.web.adapters.base import Index, adapter_factory
+from clld.web.adapters.download import N3Dump
+from clld.db.models.common import Parameter
 
 from wold2.maps import LanguagesMap, LanguageMap, MeaningMap
 from wold2.adapters import WoldGeoJsonLanguages, GeoJsonMeaning
@@ -71,4 +73,5 @@ def main(global_config, **settings):
         ILanguage,
         IIndex,
         WoldGeoJsonLanguages.mimetype)
+    config.register_download(N3Dump(Parameter, 'wold2', description="Meanings as RDF"))
     return config.make_wsgi_app()
