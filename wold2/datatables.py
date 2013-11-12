@@ -7,7 +7,9 @@ from sqlalchemy.orm import joinedload, joinedload_all, aliased, contains_eager
 
 from clld.util import dict_merged
 from clld.web.datatables import Values, Languages, Contributors
-from clld.web.datatables.base import Col, LinkCol, PercentCol, IntegerIdCol, LinkToMapCol
+from clld.web.datatables.base import (
+    Col, LinkCol, PercentCol, IntegerIdCol, LinkToMapCol, DataTable,
+)
 from clld.web.datatables.contribution import Contributions, CitationCol, ContributorsCol
 from clld.web.datatables import contributor
 from clld.web.datatables.unit import Units
@@ -356,7 +358,6 @@ class Authors(contributor.Contributors):
             contributor.NameCol(self, 'name'),
             ContributionsCol(self, 'Contributions'),
             contributor.AddressCol(self, 'address'),
-            contributor.UrlCol(self, 'Homepage'),
         ]
 
 
@@ -425,11 +426,16 @@ class SemanticFieldCol(Col):
 
 
 class Meanings(Parameters):
+    __constraints__ = [SemanticField]
+
     def base_query(self, query):
-        return query.join(SemanticField)
+        query = query.join(SemanticField)
+        if self.semanticfield:
+            query = query.filter(SemanticField.pk == self.semanticfield.pk)
+        return query
 
     def col_defs(self):
-        return [
+        return filter(lambda col: not self.semanticfield or col.name != 'sf', [
             # LWT code, Meaning, Semantic category, Semantic field, borrowed/age/simplicity score, Representation,
             LWTCodeCol(self, 'lwt_code'),
             LinkCol(
@@ -467,6 +473,44 @@ class Meanings(Parameters):
                 "a language may have several counterparts for one meaning (\"synonyms\"),"
                 " and it may be lower than 41, because not all languages may have a "
                 "counterpart for a meaning. "),
+        ])
+
+
+class SemanticFieldScoreCol(ScoreCol):
+    __model__ = SemanticField
+
+
+class NumberOfMeanings(Col):
+    __kw__ = {'sClass': 'right'}
+
+    def format(self, item):
+        return len(item.meanings)
+
+
+class SemanticFields(DataTable):
+    def col_defs(self):
+        return [
+            IntegerIdCol(
+                self, 'id',
+                sDescription="The number in this column is the semantic field number. It "
+                "is the first part of the Loanword Typology Code of the words in the "
+                "corresponding field."),
+            LinkCol(
+                self, 'name',
+                sDescription="The first 22 fields are the fields of the Intercontinental "
+                "Dictionary Series meaning list, proposed by Mary Ritchie Key, and "
+                "ultimately based on Carl Darling Buck's (1949) <i>Dictionary of selected "
+                "synonyms in the principal Indo-European languages</i>. The other two fields "
+                "were added for the Loanword Typology project."),
+            NumberOfMeanings(
+                self, 'number_of_meanings',
+                sDescription="This gives the number of different meanings in each semantic field."),
+            SemanticFieldScoreCol(
+                self, 'borrowed_score', sDescription=unicode(hb_borrowed_score())),
+            SemanticFieldScoreCol(
+                self, 'age_score', sDescription=unicode(hb_age_score())),
+            SemanticFieldScoreCol(
+                self, 'simplicity_score', sDescription=unicode(hb_simplicity_score())),
         ]
 
 
@@ -477,3 +521,4 @@ def includeme(config):
     config.register_datatable('contributors', Authors)
     config.register_datatable('contributions', Vocabularies)
     config.register_datatable('parameters', Meanings)
+    config.register_datatable('semanticfields', SemanticFields)

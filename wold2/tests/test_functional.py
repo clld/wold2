@@ -12,6 +12,8 @@ class Tests(TestWithApp):
     def test_home(self):
         self.app.get('/', status=200)
         self.app.get('/terms', status=200)
+        self.app.get('/semanticfield', status=200)
+        self.app.get('/semanticfield/1', status=200)
 
     def test_values(self):
         self.app.get('/values?sEcho=1&parameter=1-1', xhr=True, status=200)
@@ -25,6 +27,7 @@ class Tests(TestWithApp):
     def test_languages(self):
         self.app.get('/language', status=200)
         self.app.get('/language.geojson', status=200)
+        self.app.get('/language/13', status=200)
 
     def test_words(self):
         self.app.get('/word/72141423147775096', status=200)

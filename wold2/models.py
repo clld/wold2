@@ -169,7 +169,7 @@ class Translation(Base):
     meaning = relationship(Meaning, backref='translations')
 
 
-def score_per_meaning_query(type_, filter_=None):
+def score_per_meaning_query(type_, filter_=None):  # pragma: no cover
     """
 select
     a.id, a.label, a.semantic_category, a.semantic_field_id, sum(a.borrowed_score)/sum(a.representation) as borrowed_score, count(distinct a.word_id)
@@ -274,7 +274,7 @@ order by
     return query
 
 
-def score_per_semanticfield_query(type_):
+def score_per_semanticfield_query(type_):  # pragma: no cover
     aa = alias(score_per_meaning_query(type_), name='aa')
 
     return select(

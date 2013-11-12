@@ -7,8 +7,8 @@
     by ${h.linked_contributors(request, ctx)} &nbsp; ${h.cite_button(request, ctx)}
 </div>
 <p>
-    The vocabulary contains ${ctx.count_core_list_counterparts} meaning-word pairs corresponding to
-    core ${u.term_link(request, 'lwt_meaning', 'LWT meanings')} from the recipient language
+    The vocabulary contains ${ctx.count_core_list_counterparts} meaning-word pairs ("entries")
+    corresponding to core ${u.term_link(request, 'lwt_meaning', 'LWT meanings')} from the recipient language
     ${h.link(request, ctx.language)}. The corresponding text chapter was published in the
     book Loanwords in the World's Languages. The language page ${h.link(request, ctx.language)}
     contains a list of all ${u.term_link(request, 'loanword', 'loanwords')} arranged by
@@ -16,7 +16,7 @@
 </p>
 <div class="tabbable">
     <ul class="nav nav-tabs">
-        <li class="active"><a href="#tab1" data-toggle="tab">Words</a></li>
+        <li class="active"><a href="#tab1" data-toggle="tab">Meaning-word pairs</a></li>
         <li><a href="#tab2" data-toggle="tab">Description</a></li>
     </ul>
     <div class="tab-content" style="overflow: visible;">

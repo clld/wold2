@@ -51,6 +51,8 @@ def main(global_config, **settings):
         'contribution': '/vocabulary/{id:[^/\.]+}',
         'contributors': '/contributor',
         'contributor': '/contributor/{id:[^/\.]+}',
+        'semanticfields': '/semanticfield',
+        'semanticfield': '/semanticfield/{id:[^/\.]+}',
         'legal': '/about/legal',
     }
     ##settings['sitemaps'] = 'contribution parameter source sentence valueset'.split()

@@ -135,28 +135,6 @@ def get_related_languages(ctx, req):
     return qr, qd
 
 
-def get_related_languages_geojson(ctx, req, langs):
-    def make_feature(lang, recipient):
-        return {
-            'type': 'Feature',
-            'geometry': {
-                'type': 'Point',
-                'coordinates': [lang.longitude, lang.latitude]},
-            'properties': {
-                'name': lang.name,
-                'id': lang.id,
-                'recipient': 'y' if recipient else 'n',
-            }
-        }
-
-    features = [make_feature(ctx, req.params.get('t') != 'donor')]
-
-    for lang in langs:
-        features.append(make_feature(lang, req.params.get('t') == 'donor'))
-
-    return {'type': 'FeatureCollection', 'properties': {}, 'features': features}
-
-
 def source_words(req, ctx):
     def _format(loan):
         if loan.source_word.name == 'Unidentifiable' and not loan.source_word.language and not loan.source_word.description:

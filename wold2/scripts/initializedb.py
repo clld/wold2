@@ -51,14 +51,11 @@ def main(args):
         description='World Loanword Database',
         domain='wold.livingsources.org',
         published=date(2009, 8, 15),
-        license='http://creativecommons.org/licenses/by-sa/3.0/',
-        #license='http://creativecommons.org/licenses/by-nc-nd/2.0/de/deed.en',
-        contact='ontact.wold@livingreviews.org',
+        license='http://creativecommons.org/licenses/by/3.0/de/',
+        contact='contact.wold@livingreviews.org',
         jsondata={
-            'license_icon': 'http://i.creativecommons.org/l/by-sa/3.0/88x31.png',
-            'license_name': 'Creative Commons Attribution-ShareAlike 3.0 Unported License'})
-            #'license_icon': 'http://wals.info/static/images/cc_by_nc_nd.png',
-            #'license_name': 'Creative Commons Attribution-NonCommercial-NoDerivs 2.0 Germany'})
+            'license_icon': 'http://i.creativecommons.org/l/by/3.0/de/88x31.png',
+            'license_name': 'Creative Commons Attribution 3.0 Germany License'})
     DBSession.add(dataset)
 
     for i, editor in enumerate(['haspelmathmartin', 'tadmoruri']):
@@ -68,8 +65,9 @@ def main(args):
     # migrate semantic_field table: complete
     #
     for row in old_db.execute("select * from semantic_field"):
-        kw = dict((key, row[key]) for key in ['id', 'name', 'description'])
-        data.add(models.SemanticField, row['id'], **kw)
+        if row['id'] != 25:
+            kw = dict((key, row[key]) for key in ['id', 'name', 'description'])
+            data.add(models.SemanticField, row['id'], **kw)
 
     #
     # migrate language table: complete
