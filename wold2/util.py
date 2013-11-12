@@ -6,8 +6,14 @@ from sqlalchemy.orm import aliased
 from clld.web.util.helpers import link, button, icon, text2html
 from clld.web.util.htmllib import HTML, literal
 from clld.db.meta import DBSession
+from clld.db.models.common import Value, ValueSet
 
 from wold2.models import WoldLanguage, Word, Loan
+
+
+def contribution_md_txt(request=None, context=None, **kw):
+    return dict(entries=DBSession.query(Value.pk).join(ValueSet)\
+                .filter(ValueSet.contribution_pk == context.pk).count())
 
 
 def infobutton(desc, content_type='text', placement='right'):
