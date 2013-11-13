@@ -22,20 +22,16 @@ _('Terms')
 
 class WoldMapMarker(MapMarker):
     def __call__(self, ctx, req):
-        c = None
+        asset_spec = None
         if IValueSet.providedBy(ctx):
-            return req.static_url('wold2:static/%s.png' % ctx.contribution.color)
-
-        if IValue.providedBy(ctx):
-            return req.static_url('wold2:static/%s.png' % ctx.valueset.contribution.color)
-
-        if ILanguage.providedBy(ctx):
-            c = 'ddd0000' if ctx.vocabulary else 'c4d6cee'
-
-        if c:
-            return req.static_url('clld:web/static/icons/%s.png' % c)
-
-        return super(WoldMapMarker, self).__call__(ctx, req)
+            asset_spec = 'wold2:static/%s.png' % ctx.contribution.color
+        elif IValue.providedBy(ctx):
+            asset_spec = 'wold2:static/%s.png' % ctx.valueset.contribution.color
+        elif ILanguage.providedBy(ctx):
+            asset_spec = 'clld:web/static/icons/%s.png' % (
+                'ddd0000' if ctx.vocabulary else 'c4d6cee',)
+        return req.static_url(asset_spec) if asset_spec else \
+            super(WoldMapMarker, self).__call__(ctx, req)
 
 
 def main(global_config, **settings):
