@@ -81,7 +81,7 @@ def get_meaning_properties(req, ctx):
         ('semantic_field', None, lambda sf: link(req, sf)),
         ('semantic_category', None, lambda s: s),
         ('borrowed_score', hb_borrowed_score(), lambda f: '{0:.2f}'.format(f)),
-        ('age_score', hb_age_score(), lambda f: '{0:.2f}'.format(f)),
+        ('age_score', hb_age_score(), lambda f: '{0:.2f}'.format(f) if f else ''),
         ('simplicity_score', hb_simplicity_score(), lambda f: '{0:.2f}'.format(f)),
     ]:
         label = attr.capitalize().replace('_', ' ')
