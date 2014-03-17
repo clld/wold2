@@ -56,7 +56,7 @@ def main(global_config, **settings):
     settings['clld.app_template'] = "wold2.mako"
 
     config = get_configurator('wold2', (WoldMapMarker(), IMapMarker), settings=settings)
-
+    config.include('clldmpg')
     config.include('wold2.datatables')
     config.register_map('languages', LanguagesMap)
     config.register_map('language', LanguageMap)
