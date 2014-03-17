@@ -13,6 +13,7 @@
 <%def name="sidebar()">
 <div class="well well-small">
 <dl>
+    % if ctx.contribution:
     <dt class="contribution">${_('Contribution')}:</dt>
     <dd class="contribution">
         ${h.link(request, ctx.contribution)}
@@ -20,6 +21,7 @@
         ${h.linked_contributors(request, ctx.contribution)}
         ${h.button('cite', onclick=h.JSModal.show(ctx.contribution.name, request.resource_url(ctx.contribution, ext='md.html')))}
     </dd>
+    % endif
     <dt class="language">${_('Language')}:</dt>
     <dd class="language">${h.link(request, ctx.language)}</dd>
     <dt class="parameter">${_('Parameter')}:</dt>

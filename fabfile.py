@@ -1,3 +1,3 @@
-from clld.deploy import tasks
+from clldfabric import tasks
 tasks.init('wold2')
 
