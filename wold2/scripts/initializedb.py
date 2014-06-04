@@ -49,7 +49,7 @@ def main(args):
         id='wold',
         name='WOLD',
         description='World Loanword Database',
-        domain='wold.livingsources.org',
+        domain='wold.clld.org',
         published=date(2009, 8, 15),
         license='http://creativecommons.org/licenses/by/3.0/de/',
         contact='contact.wold@livingreviews.org',

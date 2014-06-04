@@ -1,13 +1,6 @@
 <%inherit file="wold2.mako"/>
 
 <%def name="sidebar()">
-  <div id="wold_news" class="well well-small">
-  </div>
-  <script>
-$(document).ready(function() {
-    CLLD.Feed.init(${h.dumps(dict(eid="wold_news", url="http://blog.wold.livingsources.org/category/news/feed/", title="WOLD News"))|n});
-});
-  </script>
 </%def>
 
 
