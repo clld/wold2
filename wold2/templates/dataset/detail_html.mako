@@ -1,6 +1,26 @@
 <%inherit file="../home_comp.mako"/>
 <%namespace name="util" file="../util.mako"/>
 
+<%def name="sidebar()">
+    <%util:well>
+        <h3>New domain for <i>WOLD</i></h3>
+        <p>
+            For reasons beyond our control we have to serve <i>WOLD</i> under a new domain.
+            Starting June 3, 2014 <i>WOLD</i> should be accessed using the domain
+            <a href="http://wold.clld.org">wold.clld.org</a>
+            instead of the old domain <i>wold.livingsources.org</i>.
+        </p>
+        <p>
+            Until the end of 2014 the old domain will be redirected to the new one, but
+            make sure you update bookmarks or links accordingly. From January 2015
+            <i>wold.livingsources.org</i> is no longer under our control.
+        </p>
+        <p>
+            We regret that we could not find a better solution and apologize for
+            the inconvenience.
+        </p>
+    </%util:well>
+</%def>
 
 <h2>The World Loanword Database (WOLD)</h2>
 <p>
