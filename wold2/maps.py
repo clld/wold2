@@ -1,3 +1,5 @@
+from __future__ import unicode_literals, division, absolute_import, print_function
+
 from clld.web.maps import Map, Layer, Legend, ParameterMap
 from clld.web.adapters.geojson import GeoJson
 from clld.web.util.htmllib import HTML, literal
@@ -72,3 +74,9 @@ class DonorMap(LanguageMap):
 class MeaningMap(ParameterMap):
     def get_options(self):
         return {'show_labels': True}
+
+
+def includeme(config):
+    config.register_map('languages', LanguagesMap)
+    config.register_map('language', LanguageMap)
+    config.register_map('parameter', MeaningMap)

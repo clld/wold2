@@ -1,12 +1,12 @@
 """
 custom datatables for wold2
 """
-from sqlalchemy import Integer
-from sqlalchemy.sql.expression import cast
+from __future__ import unicode_literals, division, absolute_import, print_function
+
 from sqlalchemy.orm import joinedload, joinedload_all, aliased, contains_eager
 
 from clld.util import dict_merged
-from clld.web.datatables import Values, Languages, Contributors
+from clld.web.datatables import Values, Languages
 from clld.web.datatables.base import (
     Col, LinkCol, PercentCol, IntegerIdCol, LinkToMapCol, DataTable,
 )
@@ -15,7 +15,7 @@ from clld.web.datatables import contributor
 from clld.web.datatables.unit import Units
 from clld.web.datatables.parameter import Parameters
 from clld.web.util.htmllib import HTML
-from clld.web.util.helpers import text2html, link
+from clld.web.util.helpers import link
 from clld.db.meta import DBSession
 from clld.db.models import common
 from clld.db.util import get_distinct_values
@@ -38,18 +38,19 @@ class RelationCol(Col):
 
     def format(self, item):
         coll = item.source_word_assocs if self.dt.type == 'donor' \
-               else item.target_word_assocs
+            else item.target_word_assocs
         attr = 'source_word' if self.dt.type == 'donor' else 'target_word'
-        return ', '.join(set([l.relation for l in coll if getattr(l, attr).language == self.dt.language]))
-        return '%s' % list(['%s (%s) -> %s (%s)' % (l.source_word, l.source_word.language, l.target_word, l.target_word.language) for l in coll if getattr(l, attr).language == self.dt.language])
+        return ', '.join(set(
+            [l.relation for l in coll if getattr(l, attr).language == self.dt.language]))
 
 
 class RelWordsCol(Col):
     def format(self, item):
         coll = item.source_word_assocs if self.dt.type == 'donor' \
-               else item.target_word_assocs
+            else item.target_word_assocs
         attr = 'source_word' if self.dt.type == 'donor' else 'target_word'
-        return ', '.join([link(self.dt.req, getattr(l, attr)) for l in coll if getattr(l, attr).language == self.dt.language])
+        return ', '.join([link(self.dt.req, getattr(l, attr)) for l in coll
+                          if getattr(l, attr).language == self.dt.language])
 
 
 class Words(Units):
@@ -104,9 +105,10 @@ class Words(Units):
             RelWordsCol(
                 self,
                 'self',
-                sTitle='Borrowed words' if self.type !='donor' else 'Source words',
+                sTitle='Borrowed words' if self.type != 'donor' else 'Source words',
                 sDescription=w1desc,
-                model_col=self.SourceWord.name if self.type == 'donor' else self.TargetWord.name),
+                model_col=self.SourceWord.name
+                if self.type == 'donor' else self.TargetWord.name),
             RelationCol(self, 'relation'),
             LinkCol(
                 self, 'language',
@@ -115,9 +117,10 @@ class Words(Units):
             LinkCol(
                 self, 'other',
                 model_col=common.Unit.name,
-                sTitle='Borrowed word' if self.type =='donor' else 'Source word',
+                sTitle='Borrowed word' if self.type == 'donor' else 'Source word',
                 sDescription=w2desc),
-            LinkToMapCol(self, 'm', get_obj=lambda i: i.language, map_id=self.type + '-map'),
+            LinkToMapCol(
+                self, 'm', get_obj=lambda i: i.language, map_id=self.type + '-map'),
         ]
         return res
 
@@ -190,7 +193,7 @@ class VocabularyCol(LinkCol):
                 link(self.dt.req, obj),
                 style="background-color: #%s;" % obj.color,
                 class_='dt-full-cell')
-        return ''
+        return ''  # pragma: no cover
 
 
 class SourceWordsCol(Col):
@@ -228,7 +231,7 @@ class Counterparts(Values):
                     joinedload_all(Counterpart.word, Word.source_word_assocs),
                     joinedload_all(common.Value.valueset, common.ValueSet.parameter))
 
-        return query
+        return query  # pragma: no cover
 
     def get_options(self):
         opts = super(Values, self).get_options()
@@ -301,19 +304,7 @@ class Counterparts(Values):
                     "in the source languages that served as models."),
             ]
 
-        return []
-
-"""
-    <div id="hb_period" class="help-ballon-content">
-      This is the time period during which the word is hypothesized to have come into the
-      language as a loanword, or during which it is first attested, or for which it can be reconstructed.
-    </div>
-
-    <div id="hb_original_script" class="help-ballon-content">
-      This gives the usual written form for languages that do not use the Latin script.
-    </div>
-
-"""
+        return []  # pragma: no cover
 
 
 class WoldLanguages(Languages):
@@ -368,8 +359,8 @@ class Vocabularies(Contributions):
             IntegerIdCol(
                 self, 'id',
                 sTitle="ID",
-                sDescription="The vocabulary ID number corresponds to the ordering to the "
-                "chapters on the book <em>Loanwords in the World's Languages</em>. "
+                sDescription="The vocabulary ID number corresponds to the ordering to the"
+                " chapters on the book <em>Loanwords in the World's Languages</em>. "
                 "Languages are listed in rough geographical order from west to east, "
                 "from Africa via Europe to Asia and the Americas, so that "
                 "geographically adjacent languages are next to each other."),
@@ -412,7 +403,8 @@ class MeaningScoreCol(ScoreCol):
 
 class SemanticFieldCol(Col):
     def __init__(self, *args, **kw):
-        kw['choices'] = [(sf.pk, sf.name) for sf in DBSession.query(SemanticField).order_by(SemanticField.pk)]
+        kw['choices'] = [(sf.pk, sf.name) for sf in
+                         DBSession.query(SemanticField).order_by(SemanticField.pk)]
         super(SemanticFieldCol, self).__init__(*args, **kw)
 
     def format(self, item):
@@ -436,7 +428,6 @@ class Meanings(Parameters):
 
     def col_defs(self):
         return filter(lambda col: not self.semanticfield or col.name != 'sf', [
-            # LWT code, Meaning, Semantic category, Semantic field, borrowed/age/simplicity score, Representation,
             LWTCodeCol(self, 'lwt_code'),
             LinkCol(
                 self, 'name', sTitle='Meaning',
@@ -499,12 +490,13 @@ class SemanticFields(DataTable):
                 self, 'name',
                 sDescription="The first 22 fields are the fields of the Intercontinental "
                 "Dictionary Series meaning list, proposed by Mary Ritchie Key, and "
-                "ultimately based on Carl Darling Buck's (1949) <i>Dictionary of selected "
-                "synonyms in the principal Indo-European languages</i>. The other two fields "
-                "were added for the Loanword Typology project."),
+                "ultimately based on Carl Darling Buck's (1949) <i>Dictionary of selected"
+                " synonyms in the principal Indo-European languages</i>. The other two "
+                "fields were added for the Loanword Typology project."),
             NumberOfMeanings(
                 self, 'number_of_meanings',
-                sDescription="This gives the number of different meanings in each semantic field."),
+                sDescription="This gives the number of different meanings in each "
+                "semantic field."),
             SemanticFieldScoreCol(
                 self, 'borrowed_score', sDescription=unicode(hb_borrowed_score())),
             SemanticFieldScoreCol(

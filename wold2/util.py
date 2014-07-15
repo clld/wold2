@@ -1,4 +1,4 @@
-from __future__ import unicode_literals
+from __future__ import unicode_literals, division, absolute_import, print_function
 from cgi import escape
 
 from sqlalchemy.orm import aliased
@@ -12,7 +12,7 @@ from wold2.models import WoldLanguage, Word, Loan
 
 
 def contribution_md_txt(request=None, context=None, **kw):
-    return dict(entries=DBSession.query(Value.pk).join(ValueSet)\
+    return dict(entries=DBSession.query(Value.pk).join(ValueSet)
                 .filter(ValueSet.contribution_pk == context.pk).count())
 
 
@@ -143,7 +143,8 @@ def get_related_languages(ctx, req):
 
 def source_words(req, ctx):
     def _format(loan):
-        if loan.source_word.name == 'Unidentifiable' and not loan.source_word.language and not loan.source_word.description:
+        if loan.source_word.name == 'Unidentifiable' \
+                and not loan.source_word.language and not loan.source_word.description:
             yield 'unidentifiable'
         else:
             yield link(req, loan.source_word)
