@@ -7,17 +7,14 @@ README = open(os.path.join(here, 'README.txt')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.txt')).read()
 
 requires = [
-    'clld',
+    'clld>=0.15.5',
     'clldmpg',
     'pyramid',
     'SQLAlchemy',
     'transaction',
     'pyramid_tm',
-    #'pyramid_debugtoolbar',
     'zope.sqlalchemy',
-    #'waitress',
-    'gunicorn',
-    'psycopg2',
+    'waitress',
     ]
 
 setup(name='wold2',
