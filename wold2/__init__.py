@@ -3,8 +3,8 @@ from __future__ import unicode_literals, division, absolute_import, print_functi
 from clld.web.app import get_configurator, MapMarker
 from clld.interfaces import ILanguage, IMapMarker, IValue, IValueSet
 from clld.web.adapters.base import Index, adapter_factory
-from clld.web.adapters.download import N3Dump
-from clld.db.models.common import Parameter
+from clld.web.adapters.download import N3Dump, Sqlite
+from clld.db.models.common import Parameter, Dataset
 
 from wold2.models import SemanticField
 from wold2.interfaces import ISemanticField
@@ -32,6 +32,10 @@ class WoldMapMarker(MapMarker):
                 'ddd0000' if ctx.vocabulary else 'c4d6cee',)
         return req.static_url(asset_spec) if asset_spec else \
             super(WoldMapMarker, self).__call__(ctx, req)
+
+
+class N3(Sqlite):
+    ext = 'n3'
 
 
 def main(global_config, **settings):
@@ -67,5 +71,6 @@ def main(global_config, **settings):
     config.register_adapter(
         adapter_factory('semanticfield/index_html.mako', base=Index), ISemanticField)
 
+    config.register_download(N3(Dataset, 'wold2', description="RDF dump"))
     config.register_download(N3Dump(Parameter, 'wold2', description="Meanings as RDF"))
     return config.make_wsgi_app()
