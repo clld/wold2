@@ -44,7 +44,7 @@ class SemanticField(Base, IdNameDescriptionMixin, ScoreMixin):
 
 
 @implementer(interfaces.IUnitDomainElement)
-class WoldUnitDomainElement(UnitDomainElement, CustomModelMixin):
+class WoldUnitDomainElement(CustomModelMixin, UnitDomainElement):
     """In WOLD, most unit parameters (like contact situation or age) have vocabulary
     specific domains. Thus we store a reference to the vocabulary.
     """
@@ -90,7 +90,7 @@ class Loan(Base):
 
 
 @implementer(interfaces.IValue)
-class Counterpart(Value, CustomModelMixin):
+class Counterpart(CustomModelMixin, Value):
     """one row in what used to be the word-meaning association table
     """
     pk = Column(Integer, ForeignKey('value.pk'), primary_key=True)
@@ -100,7 +100,7 @@ class Counterpart(Value, CustomModelMixin):
 
 
 @implementer(interfaces.IContribution)
-class Vocabulary(Contribution, CustomModelMixin):
+class Vocabulary(CustomModelMixin, Contribution):
     pk = Column(Integer, ForeignKey('contribution.pk'), primary_key=True)
     count_words = Column(Integer)
     borrowed_score = Column(Float)
@@ -109,7 +109,7 @@ class Vocabulary(Contribution, CustomModelMixin):
 
 
 @implementer(interfaces.ILanguage)
-class WoldLanguage(Language, CustomModelMixin):
+class WoldLanguage(CustomModelMixin, Language):
     pk = Column(Integer, ForeignKey('language.pk'), primary_key=True)
     vocabulary_pk = Column(Integer, ForeignKey('vocabulary.pk'))
     vocabulary = relationship(Vocabulary, backref=backref('language', uselist=False))
@@ -123,7 +123,7 @@ class WoldLanguage(Language, CustomModelMixin):
 
 
 @implementer(interfaces.IParameter)
-class Meaning(Parameter, CustomModelMixin, ScoreMixin):
+class Meaning(CustomModelMixin, Parameter, ScoreMixin):
     pk = Column(Integer, ForeignKey('parameter.pk'), primary_key=True)
 
     semantic_field_pk = Column(Integer, ForeignKey('semanticfield.pk'))
