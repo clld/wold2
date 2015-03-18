@@ -7,7 +7,7 @@
     <td>
         <strong>${u.property_label(name)}</strong>
     % if ctx.language and ctx.language.vocabulary:
-        <% desc = ctx.language.vocabulary.jsondatadict.get('fd_' + u.property_name(name)) %>
+        <% desc = ctx.language.vocabulary.jsondata.get('fd_' + u.property_name(name)) %>
         ${u.infobutton(desc, placement=placement)}
     % endif
     </td>
@@ -21,7 +21,7 @@
       <td>${caller.body()}</td>
     </tr>
 % else:
-    <% value = getattr(ctx, name, ctx.jsondatadict.get(name)) %>
+    <% value = getattr(ctx, name, ctx.jsondata.get(name)) %>
     % if value_filter(value):
     <tr>
       ${th_property(name, placement=placement)}
@@ -109,8 +109,8 @@
         <%self:tr_property name="age" with_body="${True}">
             ${u.infobutton(ctx.age.unitdomainelement.description)}
             ${ctx.age.unitdomainelement.name}
-            % if ctx.age.unitdomainelement.jsondatadict.get('start_year'):
-            (${ctx.age.unitdomainelement.jsondatadict['start_year']}&ndash;${ctx.age.unitdomainelement.jsondatadict.get('end_year', '')})
+            % if ctx.age.unitdomainelement.jsondata.get('start_year'):
+            (${ctx.age.unitdomainelement.jsondata['start_year']}&ndash;${ctx.age.unitdomainelement.jsondata.get('end_year', '')})
             % endif
         </%self:tr_property>
         % endif

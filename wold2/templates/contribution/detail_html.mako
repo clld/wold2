@@ -28,25 +28,25 @@
             <table class="table table-condensed">
                 <tbody>
                 % for fd in ['fd_form', 'fd_original_script', 'fd_free_meaning','fd_grammatical_info','fd_comment_on_word_form','fd_analyzability','fd_gloss','fd_age','fd_register','fd_numeric_frequency','fd_borrowed','fd_calqued','fd_borrowed_base','fd_comment_on_borrowed','fd_loan_history','fd_reference','fd_effect','fd_integration','fd_salience']:
-                    % if ctx.jsondatadict.get(fd):
+                    % if ctx.jsondata.get(fd):
                     <tr>
                         <th>${fd.replace('fd_', '').replace('_', ' ').capitalize()}</th>
-                        <td>${h.text2html(ctx.jsondatadict.get(fd), mode='p')}</td>
+                        <td>${h.text2html(ctx.jsondata[fd], mode='p')}</td>
                     </tr>
                     % endif
                 % endfor
                 </tbody>
             </table>
-            % if ctx.jsondatadict.get('abbreviations'):
+            % if ctx.jsondata.get('abbreviations'):
             <h3>Abbreviations</h3>
             <div>
-                ${h.text2html(ctx.jsondatadict.get('abbreviations'), mode='p')}
+                ${h.text2html(ctx.jsondata['abbreviations'], mode='p')}
             </div>
             % endif
-            % if ctx.jsondatadict.get('other_information'):
+            % if ctx.jsondata.get('other_information'):
             <h3>Other information</h3>
             <div>
-                ${h.text2html(ctx.jsondatadict.get('other_information'), mode='p')}
+                ${h.text2html(ctx.jsondata['other_information'], mode='p')}
             </div>
             % endif
         </div>
