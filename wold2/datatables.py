@@ -427,7 +427,7 @@ class Meanings(Parameters):
         return query
 
     def col_defs(self):
-        return filter(lambda col: not self.semanticfield or col.name != 'sf', [
+        return list(filter(lambda col: not self.semanticfield or col.name != 'sf', [
             LWTCodeCol(self, 'lwt_code'),
             LinkCol(
                 self, 'name', sTitle='Meaning',
@@ -452,11 +452,11 @@ class Meanings(Parameters):
                 "synonyms in the principal Indo-European languages. The other two fields "
                 "were added for the Loanword Typology project."),
             MeaningScoreCol(
-                self, 'borrowed_score', sDescription=unicode(hb_borrowed_score())),
+                self, 'borrowed_score', sDescription='%s' % hb_borrowed_score()),
             MeaningScoreCol(
-                self, 'age_score', sDescription=unicode(hb_age_score())),
+                self, 'age_score', sDescription='%s' % hb_age_score()),
             MeaningScoreCol(
-                self, 'simplicity_score', sDescription=unicode(hb_simplicity_score())),
+                self, 'simplicity_score', sDescription='%s' % hb_simplicity_score()),
             Col(self, 'representation',
                 model_col=Meaning.representation,
                 sDescription="This column shows how many counterparts for this meaning "
@@ -464,7 +464,7 @@ class Meanings(Parameters):
                 "a language may have several counterparts for one meaning (\"synonyms\"),"
                 " and it may be lower than 41, because not all languages may have a "
                 "counterpart for a meaning. "),
-        ])
+        ]))
 
 
 class SemanticFieldScoreCol(ScoreCol):
@@ -498,11 +498,11 @@ class SemanticFields(DataTable):
                 sDescription="This gives the number of different meanings in each "
                 "semantic field."),
             SemanticFieldScoreCol(
-                self, 'borrowed_score', sDescription=unicode(hb_borrowed_score())),
+                self, 'borrowed_score', sDescription='%s' % hb_borrowed_score()),
             SemanticFieldScoreCol(
-                self, 'age_score', sDescription=unicode(hb_age_score())),
+                self, 'age_score', sDescription='%s' % hb_age_score()),
             SemanticFieldScoreCol(
-                self, 'simplicity_score', sDescription=unicode(hb_simplicity_score())),
+                self, 'simplicity_score', sDescription='%s' % hb_simplicity_score()),
         ]
 
 

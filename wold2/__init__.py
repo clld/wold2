@@ -1,6 +1,8 @@
 from __future__ import unicode_literals, division, absolute_import, print_function
 
-from clld.web.app import get_configurator, MapMarker
+from pyramid.config import Configurator
+
+from clld.web.app import MapMarker
 from clld.interfaces import ILanguage, IMapMarker, IValue, IValueSet
 from clld.web.adapters.base import Index, adapter_factory
 from clld.web.adapters.download import N3Dump, Sqlite
@@ -55,14 +57,9 @@ def main(global_config, **settings):
         'semanticfield': '/semanticfield/{id:[^/\.]+}',
         'legal': '/about/legal',
     }
-    settings['mako.directories'] = ['wold2:templates', 'clld:web/templates']
-    settings['clld.app_template'] = "wold2.mako"
-
-    config = get_configurator('wold2', (WoldMapMarker(), IMapMarker), settings=settings)
+    config = Configurator(settings=settings)
     config.include('clldmpg')
-    config.include('wold2.datatables')
-    config.include('wold2.maps')
-    config.include('wold2.adapters')
+    config.registry.registerUtility(WoldMapMarker(), IMapMarker),
 
     config.register_resource(
         'semanticfield', SemanticField, ISemanticField, with_index=True)

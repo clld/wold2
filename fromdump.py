@@ -16,7 +16,7 @@ Run
     cd wold2
     pip install -r requirements.txt
     python setup.py develop
-    python wold2/scripts/unfreeze.py sqlite.ini
+    clld-unfreeze sqlite.ini
     pserve sqlite.ini
 
 or equivalent to start the WOLD web app accessible at
