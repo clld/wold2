@@ -54,7 +54,7 @@ class WoldUnitDomainElement(CustomModelMixin, UnitDomainElement):
 
 
 @implementer(interfaces.IUnit)
-class Word(Unit, ScoreMixin):
+class Word(CustomModelMixin, Unit, ScoreMixin):
     pk = Column(Integer, ForeignKey('unit.pk'), primary_key=True)
 
     #
