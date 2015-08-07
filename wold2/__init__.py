@@ -4,7 +4,6 @@ from pyramid.config import Configurator
 
 from clld.web.app import MapMarker
 from clld.interfaces import ILanguage, IMapMarker, IValue, IValueSet
-from clld.web.adapters.base import Index, adapter_factory
 from clld.web.adapters.download import N3Dump, Sqlite
 from clld.db.models.common import Parameter, Dataset
 
@@ -60,14 +59,8 @@ def main(global_config, **settings):
     config = Configurator(settings=settings)
     config.include('clldmpg')
     config.registry.registerUtility(WoldMapMarker(), IMapMarker),
-
     config.register_resource(
         'semanticfield', SemanticField, ISemanticField, with_index=True)
-    config.register_adapter(
-        adapter_factory('semanticfield/detail_html.mako'), ISemanticField)
-    config.register_adapter(
-        adapter_factory('semanticfield/index_html.mako', base=Index), ISemanticField)
-
     config.register_download(N3(Dataset, 'wold2', description="RDF dump"))
     config.register_download(N3Dump(Parameter, 'wold2', description="Meanings as RDF"))
     return config.make_wsgi_app()
