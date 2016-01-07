@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 
 requires = [
-    'clld>=1.5.0',
-    'clldmpg>=1.0.0',
+    'clld>=1.5.0,<2.0.0',
+    'clldmpg>=1.1.1',
 ]
 
 tests_require = [
