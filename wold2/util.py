@@ -12,8 +12,11 @@ from wold2.models import WoldLanguage, Word, Loan
 
 
 def contribution_md_txt(request=None, context=None, **kw):
-    return dict(entries=DBSession.query(Value.pk).join(ValueSet)
-                .filter(ValueSet.contribution_pk == context.pk).count())
+    try:
+        return dict(entries=DBSession.query(Value.pk).join(ValueSet)
+                    .filter(ValueSet.contribution_pk == context.pk).count())
+    except AttributeError:
+        return {}
 
 
 def infobutton(desc, content_type='text', placement='right'):
