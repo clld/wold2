@@ -5,7 +5,7 @@ from __future__ import unicode_literals, division, absolute_import, print_functi
 
 from sqlalchemy.orm import joinedload, joinedload_all, aliased, contains_eager
 
-from clld.util import dict_merged
+from clldutils.misc import dict_merged
 from clld.web.datatables import Values, Languages
 from clld.web.datatables.base import (
     Col, LinkCol, PercentCol, IntegerIdCol, LinkToMapCol, DataTable,
