@@ -58,7 +58,8 @@ class Words(Units):
         self.type = type_
         if 'type_' in req.params:
             self.type = req.params['type_']
-        assert self.type in ['donor', 'recipient']
+        if self.type not in ['donor', 'recipient']:
+            self.type = 'donor'
         self.Donor = aliased(WoldLanguage)
         self.Recipient = aliased(WoldLanguage)
         self.SourceWord = aliased(Word)
