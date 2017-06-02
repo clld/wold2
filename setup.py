@@ -21,8 +21,8 @@ setup(
     zip_safe=False,
     test_suite='wold2',
     install_requires=[
-        'clld>=3.2.0',
-        'clldmpg>=2.0.0',
+        'clld>=3.2.7',
+        'clldmpg>=2.4.1',
     ],
     tests_require=[
         'WebTest >= 1.3.1',  # py3 compat
