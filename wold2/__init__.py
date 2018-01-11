@@ -4,7 +4,7 @@ from pyramid.config import Configurator
 
 from clld.web.app import MapMarker
 from clld.interfaces import ILanguage, IMapMarker, IValue, IValueSet
-from clld.web.adapters.download import N3Dump, Sqlite
+from clld.web.adapters.download import N3Dump
 from clld.db.models.common import Parameter, Dataset
 
 from wold2.models import SemanticField
@@ -35,10 +35,6 @@ class WoldMapMarker(MapMarker):
             super(WoldMapMarker, self).__call__(ctx, req)
 
 
-class N3(Sqlite):
-    ext = 'n3'
-
-
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
@@ -61,6 +57,5 @@ def main(global_config, **settings):
     config.registry.registerUtility(WoldMapMarker(), IMapMarker),
     config.register_resource(
         'semanticfield', SemanticField, ISemanticField, with_index=True)
-    config.register_download(N3(Dataset, 'wold2', description="RDF dump"))
     config.register_download(N3Dump(Parameter, 'wold2', description="Meanings as RDF"))
     return config.make_wsgi_app()

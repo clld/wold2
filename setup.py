@@ -21,13 +21,24 @@ setup(
     zip_safe=False,
     test_suite='wold2',
     install_requires=[
-        'clld>=3.2.7',
-        'clldmpg>=2.4.1',
+        'clld~=4.0',
+        'clldmpg~=3.1',
+        "waitress",
     ],
-    tests_require=[
-        'WebTest >= 1.3.1',  # py3 compat
-        'mock>=1.0',
-    ],
+    extras_require={
+        'dev': ['flake8', 'waitress', 'psycopg2'],
+        'test': [
+            'tox',
+            'mock',
+            'pytest>=3.1',
+            'pytest-clld',
+            'pytest-mock',
+            'pytest-cov',
+            'coverage>=4.2',
+            'selenium',
+            'zope.component>=3.11.0',
+        ],
+    },
     entry_points="""\
       [paste.app_factory]
       main = wold2:main
