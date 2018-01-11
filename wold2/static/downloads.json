@@ -1,0 +1,38 @@
+{
+    "1.0": {
+        "bitstreams": [
+            {
+                "last-modified": 1515656815664,
+                "checksum": "97b4ea2ff33992e2734d4c5f4a951e53",
+                "created": 1515656814499,
+                "checksum-algorithm": "MD5",
+                "bitstreamid": "wold_dataset.cldf.zip",
+                "filesize": 2826919,
+                "content-type": "application/zip"
+            },
+            {
+                "last-modified": 1515656953469,
+                "checksum": "95c050dd30577922f0d0ae030c362d65",
+                "created": 1515656953318,
+                "checksum-algorithm": "MD5",
+                "bitstreamid": "wold_dataset.n3.gz",
+                "filesize": 6227186,
+                "content-type": "application/octet-stream"
+            },
+            {
+                "last-modified": 1515656826263,
+                "checksum": "5b0b2af78ea986cefcd26d90be38b64c",
+                "created": 1515656826222,
+                "checksum-algorithm": "MD5",
+                "bitstreamid": "wold_parameter.n3.gz",
+                "filesize": 273523,
+                "content-type": "application/octet-stream"
+            }
+        ],
+        "oid": "EAEA0-4F9C-34D7-78A3-0",
+        "metadata": {
+            "title": "wold2 1.0 - downloads",
+            "creator": "pycdstar"
+        }
+    }
+}
