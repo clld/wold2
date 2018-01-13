@@ -4,10 +4,12 @@ import os
 from sqlalchemy.orm import joinedload_all
 
 from clldutils.path import Path
+from clldutils.misc import lazyproperty
 from clld.db.models.common import Identifier, Unit, UnitValue
 from clld.interfaces import IParameter, ILanguage, IIndex, IContribution, ICldfDataset
 from clld.web.adapters import GeoJsonLanguages, GeoJsonParameter
-from clld.web.adapters.cldf import CldfDataset, url_template
+from clld.web.adapters.cldf import CldfDownload, url_template
+from pycldf import Wordlist
 try:
     from pyconcepticon.api import Concepticon
 except ImportError:
@@ -57,14 +59,18 @@ props = """\
  word_source""".split()
 
 
-class CldfDictionary(CldfDataset):
-    def __init__(self, obj):
-        CldfDataset.__init__(self, obj)
-        self.concepticon = {}
+class CldfDictionary(CldfDownload):
+    #
+    # FIXME: implement fully once CLDF support in clld is better!
+    #
+    @lazyproperty
+    def concepticon(self):
+        res = {}
         if Concepticon:
             concepticon = Concepticon(_venvs.joinpath('concepticon', 'concepticon-data'))
             for concept in concepticon.conceptlist('Haspelmath-2009-1460'):
-                self.concepticon[concept['WOLD_ID']] = concept['CONCEPTICON_ID']
+                res[concept['WOLD_ID']] = concept['CONCEPTICON_ID']
+        return res
 
     def columns(self, req):
         return [
@@ -122,14 +128,9 @@ class CldfDictionary(CldfDataset):
             value.word.contact_situation
         ] + [value.word.jsondata.get(prop) or '' for prop in props]
 
-    def value_query(self):
-        return CldfDataset.value_query(self).options(joinedload_all(
-            Counterpart.word, Unit.unitvalues, UnitValue.unitparameter))
-
 
 def includeme(config):
     config.register_adapter(GeoJsonMeaning, IParameter)
-    config.register_adapter(CldfDictionary, IContribution, ICldfDataset, name='cldf')
     config.register_adapter(
         WoldGeoJsonLanguages,
         ILanguage,

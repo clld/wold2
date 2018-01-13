@@ -21,13 +21,12 @@ setup(
     zip_safe=False,
     test_suite='wold2',
     install_requires=[
-        'clld~=4.0',
         'clldmpg~=3.1',
-        "waitress",
     ],
     extras_require={
-        'dev': ['flake8', 'waitress', 'psycopg2'],
+        'dev': ['flake8', 'waitress'],
         'test': [
+            'psycopg2',
             'tox',
             'mock',
             'pytest>=3.1',
