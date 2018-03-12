@@ -1,17 +1,17 @@
-# English translations for wold2.
+# Translations template for wold2.
 # Copyright (C) 2013 ORGANIZATION
 # This file is distributed under the same license as the wold2 project.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
 #
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: wold2 0.0\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
 "POT-Creation-Date: 2013-10-30 13:06+0100\n"
-"PO-Revision-Date: 2013-10-22 10:46+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: en <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -19,28 +19,29 @@ msgstr ""
 
 #: wold2/__init__.py:12
 msgid "Contribution"
-msgstr "Vocabulary"
+msgstr ""
 
 #: wold2/__init__.py:13
 msgid "Contributions"
-msgstr "Vocabularies"
+msgstr ""
 
 #: wold2/__init__.py:14
 msgid "Contributor"
-msgstr "Author"
+msgstr ""
 
 #: wold2/__init__.py:15
 msgid "Contributors"
-msgstr "Authors"
+msgstr ""
 
 #: wold2/__init__.py:16
 msgid "Parameter"
-msgstr "Meaning"
+msgstr ""
 
 #: wold2/__init__.py:17
 msgid "Parameters"
-msgstr "Meanings"
+msgstr ""
 
 #: wold2/__init__.py:18
 msgid "Terms"
-msgstr "Glossary"
+msgstr ""
+
