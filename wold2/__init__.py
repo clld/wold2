@@ -57,5 +57,5 @@ def main(global_config, **settings):
     config.registry.registerUtility(WoldMapMarker(), IMapMarker),
     config.register_resource(
         'semanticfield', SemanticField, ISemanticField, with_index=True)
-    config.register_download(N3Dump(Parameter, 'wold2', description="Meanings as RDF"))
+    #config.register_download(N3Dump(Parameter, 'wold2', description="Meanings as RDF"))
     return config.make_wsgi_app()
