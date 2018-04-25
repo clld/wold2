@@ -3,7 +3,7 @@ from __future__ import unicode_literals, division, absolute_import, print_functi
 from sqlalchemy.orm import joinedload_all, joinedload
 
 from clld.db.meta import DBSession
-from clld.db.models.common import Parameter, Language, Value
+from clld.db.models.common import Parameter, Language, Value, Contribution
 from clld.interfaces import IParameter, ILanguage, IIndex, ICldfConfig
 from clld.web.adapters import GeoJsonLanguages, GeoJsonParameter
 from clld.web.adapters.cldf import CldfConfig, url_template
@@ -85,6 +85,8 @@ class WoldCldfConfig(CldfConfig):
             'http://cldf.clld.org/v1.0/terms.rdf#languageReference',
         )
         ds['LanguageTable', 'ID'].valueUrl = url_template(req, 'language', 'ID')
+        for v in DBSession.query(Contribution):
+            ds.add_sources("@misc{%s,\nnote={%s}}" % (v.id, v.jsondata['fd_reference']))
 
     def custom_tabledata(self, req, tabledata):
         loans, count = [], 0
@@ -130,6 +132,7 @@ class WoldCldfConfig(CldfConfig):
             res['Word_ID'] = item.word.id
             res.update({p: item.word.jsondata.get(p) or '' for p in props})
             res.update(
+                Source=[item.valueset.contribution.id],
                 BorrowedScore=item.word.borrowed_score,
                 AgeScore=item.word.age_score,
                 SimplicityScore=item.word.simplicity_score,

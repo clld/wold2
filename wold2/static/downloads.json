@@ -2,18 +2,18 @@
     "2009": {
         "bitstreams": [
             {
-                "last-modified": 1521187167014,
-                "checksum": "99471a77b6fc45eb5317a7a4103a4c73",
-                "created": 1521187166931,
+                "last-modified": 1524638903809,
+                "checksum": "85eed23e99e017caec7f429dd853e21d",
+                "created": 1524638903709,
                 "checksum-algorithm": "MD5",
                 "bitstreamid": "wold_dataset.cldf.zip",
-                "filesize": 3646975,
+                "filesize": 3700450,
                 "content-type": "application/zip"
             }
         ],
-        "oid": "EAEA0-E5D9-D6BF-42CC-0",
+        "oid": "EAEA0-92F4-126F-089F-0",
         "metadata": {
-            "title": "wold2 2018 - downloads",
+            "title": "wold2 2009.1 - downloads",
             "creator": "pycdstar"
         }
     }
