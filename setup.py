@@ -21,19 +21,19 @@ setup(
     zip_safe=False,
     test_suite='wold2',
     install_requires=[
-        'clld~=4.2',
-        'clldmpg~=3.1',
+        'clld>=4.2.2',
+        'clldmpg>=3.3.1',
         'sqlalchemy',
         'waitress',
     ],
     extras_require={
         'dev': [
             'flake8',
-            'psycopg2',
             'tox'
         ],
         'test': [
             'mock',
+            'psycopg2',
             'pytest>=3.1',
             'pytest-clld',
             'pytest-mock',
