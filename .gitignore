@@ -1,5 +1,6 @@
 .cache
 *.py[cod]
+geckodriver.log
 
 # C extensions
 *.so
@@ -27,6 +28,7 @@ pip-log.txt
 nosetests.xml
 
 # Mr Developer
+.pytest_cache
 .mr.developer.cfg
 .project
 .pydevproject
