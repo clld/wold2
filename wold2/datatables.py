@@ -14,7 +14,7 @@ from clld.web.datatables.contribution import Contributions, CitationCol, Contrib
 from clld.web.datatables import contributor
 from clld.web.datatables.unit import Units
 from clld.web.datatables.parameter import Parameters
-from clld.web.util.htmllib import HTML
+from clld.web.util.htmllib import HTML, literal
 from clld.web.util.helpers import link
 from clld.db.meta import DBSession
 from clld.db.models import common
@@ -248,19 +248,19 @@ class Counterparts(Values):
             self, 'word_form',
             model_col=Word.name,
             get_object=get_word,
-            sDescription="<p>The word is given in the usual orthography or "
+            sDescription=literal("<p>The word is given in the usual orthography or "
             "transcription, and in the usual citation form.</p><p>Click on a word to "
-            "get more information than is shown in this table.</p>")
+            "get more information than is shown in this table.</p>"))
         borrowed_col = Col(
             self, 'borrowed', sTitle='Borrowed status',
             model_col=Word.borrowed,
             get_object=get_word,
             choices=get_distinct_values(Word.borrowed),
-            sDescription="<p>There are five borrowed statuses, reflecting decreasing "
+            sDescription=literal("<p>There are five borrowed statuses, reflecting decreasing "
             "likelihood that the word is a loanword:</p><ol>"
             "<li>clearly borrowed</li><li>probably borrowed</li><li>perhaps borrowed</li>"
             "<li>very little evidence for borrowing</li>"
-            "<li>no evidence for borrowing</li></ol>")
+            "<li>no evidence for borrowing</li></ol>"))
 
         if self.parameter:
             return [
@@ -360,17 +360,17 @@ class Vocabularies(Contributions):
             IntegerIdCol(
                 self, 'id',
                 sTitle="ID",
-                sDescription="The vocabulary ID number corresponds to the ordering to the"
+                sDescription=literal("The vocabulary ID number corresponds to the ordering to the"
                 " chapters on the book <em>Loanwords in the World's Languages</em>. "
                 "Languages are listed in rough geographical order from west to east, "
                 "from Africa via Europe to Asia and the Americas, so that "
-                "geographically adjacent languages are next to each other."),
+                "geographically adjacent languages are next to each other.")),
             VocabularyCol(
                 self, 'vocabulary',
-                sDescription="<p>Each vocabulary of WOLD is a separate electronic "
+                sDescription=literal("<p>Each vocabulary of WOLD is a separate electronic "
                 "publication with a separate author or team of authors. Each vocabulary "
                 "has a characteristic colour in WOLD.</p><p>Click on a vocabulary to "
-                "see the words (loanwords and nonloanwords) and their properties.</p>"),
+                "see the words (loanwords and nonloanwords) and their properties.</p>")),
             ContributorsCol(
                 self, 'contributor',
                 sDescription="The authors are experts of the language and its history. "
@@ -453,11 +453,11 @@ class Meanings(Parameters):
                 "synonyms in the principal Indo-European languages. The other two fields "
                 "were added for the Loanword Typology project."),
             MeaningScoreCol(
-                self, 'borrowed_score', sDescription='%s' % hb_borrowed_score()),
+                self, 'borrowed_score', sDescription=literal('%s' % hb_borrowed_score())),
             MeaningScoreCol(
-                self, 'age_score', sDescription='%s' % hb_age_score()),
+                self, 'age_score', sDescription=literal('%s' % hb_age_score())),
             MeaningScoreCol(
-                self, 'simplicity_score', sDescription='%s' % hb_simplicity_score()),
+                self, 'simplicity_score', sDescription=literal('%s' % hb_simplicity_score())),
             Col(self, 'representation',
                 model_col=Meaning.representation,
                 sDescription="This column shows how many counterparts for this meaning "
@@ -499,11 +499,11 @@ class SemanticFields(DataTable):
                 sDescription="This gives the number of different meanings in each "
                 "semantic field."),
             SemanticFieldScoreCol(
-                self, 'borrowed_score', sDescription='%s' % hb_borrowed_score()),
+                self, 'borrowed_score', sDescription=literal('%s' % hb_borrowed_score())),
             SemanticFieldScoreCol(
-                self, 'age_score', sDescription='%s' % hb_age_score()),
+                self, 'age_score', sDescription=literal('%s' % hb_age_score())),
             SemanticFieldScoreCol(
-                self, 'simplicity_score', sDescription='%s' % hb_simplicity_score()),
+                self, 'simplicity_score', sDescription=literal('%s' % hb_simplicity_score())),
         ]
 
 
