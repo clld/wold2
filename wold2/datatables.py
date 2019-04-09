@@ -489,11 +489,11 @@ class SemanticFields(DataTable):
                 "corresponding field."),
             LinkCol(
                 self, 'name',
-                sDescription="The first 22 fields are the fields of the Intercontinental "
+                sDescription=literal("The first 22 fields are the fields of the Intercontinental "
                 "Dictionary Series meaning list, proposed by Mary Ritchie Key, and "
                 "ultimately based on Carl Darling Buck's (1949) <i>Dictionary of selected"
                 " synonyms in the principal Indo-European languages</i>. The other two "
-                "fields were added for the Loanword Typology project."),
+                "fields were added for the Loanword Typology project.")),
             NumberOfMeanings(
                 self, 'number_of_meanings',
                 sDescription="This gives the number of different meanings in each "
