@@ -1,15 +1,13 @@
-from __future__ import unicode_literals, division, absolute_import, print_function
-
 from clld.web.maps import Map, Layer, Legend, ParameterMap
 from clld.web.adapters.geojson import GeoJson
 from clld.web.util.htmllib import HTML, literal
-
+from clldutils import svg
 
 ICONS = {'recipient': 'dff0000', 'donor': 'c4d6cee'}
 
 
 def icon_url(req, type_):
-    return req.static_url('clld:web/static/icons/%s.png' % ICONS[type_])
+    return svg.data_url(svg.icon(ICONS[type_]))
 
 
 def legend_items(req):
