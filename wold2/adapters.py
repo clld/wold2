@@ -1,6 +1,4 @@
-from __future__ import unicode_literals, division, absolute_import, print_function
-
-from sqlalchemy.orm import joinedload_all, joinedload
+from sqlalchemy.orm import joinedload
 
 from clld.db.meta import DBSession
 from clld.db.models.common import Parameter, Language, Value, Contribution
@@ -93,7 +91,7 @@ class WoldCldfConfig(CldfConfig):
         languages = {l.pk: l.id for l in DBSession.query(Language)}
         for loan in DBSession.query(Loan).options(
             joinedload(Loan.source_word),
-            joinedload_all(Loan.target_word, Word.counterparts)
+            joinedload(Loan.target_word).joinedload(Word.counterparts)
         ):
             for cp in loan.target_word.counterparts:
                 count += 1
@@ -112,7 +110,7 @@ class WoldCldfConfig(CldfConfig):
         if model == Parameter:
             q = q.options(joinedload(Meaning.semantic_field))
         if model == Value:
-            q = q.options(joinedload_all(Counterpart.word, Word.unitvalues))
+            q = q.options(joinedload(Counterpart.word).joinedload(Word.unitvalues))
         return q
 
     def convert(self, model, item, req):

@@ -1,5 +1,4 @@
-from __future__ import unicode_literals, division, absolute_import, print_function
-from cgi import escape
+from html import escape
 
 from sqlalchemy.orm import aliased
 

@@ -1,9 +1,7 @@
 """
 custom datatables for wold2
 """
-from __future__ import unicode_literals, division, absolute_import, print_function
-
-from sqlalchemy.orm import joinedload, joinedload_all, aliased, contains_eager
+from sqlalchemy.orm import joinedload, aliased, contains_eager
 
 from clldutils.misc import dict_merged
 from clld.web.datatables import Values, Languages
@@ -229,8 +227,8 @@ class Counterparts(Values):
             return query.join(common.ValueSet.parameter)\
                 .filter(common.ValueSet.contribution_pk == self.contribution.pk)\
                 .options(
-                    joinedload_all(Counterpart.word, Word.source_word_assocs),
-                    joinedload_all(common.Value.valueset, common.ValueSet.parameter))
+                    joinedload(Counterpart.word).joinedload(Word.source_word_assocs),
+                    joinedload(common.Value.valueset).joinedload(common.ValueSet.parameter))
 
         return query  # pragma: no cover
 
