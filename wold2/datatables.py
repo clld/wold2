@@ -65,23 +65,24 @@ class Words(Units):
         Units.__init__(self, req, model, eid='datatable-%s' % self.type, **kw)
 
     def base_query(self, query):
-        if self.type == 'donor':
-            # we are looking for target words borrowed from english into other languages:
-            query = DBSession.query(common.Unit)\
-                .join(self.Recipient, self.Recipient.pk == common.Unit.language_pk)\
-                .join(Loan, common.Unit.pk == Loan.target_word_pk)\
-                .join(self.SourceWord, Loan.source_word_pk == self.SourceWord.pk)\
-                .join(self.Donor, self.Donor.pk == self.SourceWord.language_pk)\
-                .filter(self.Donor.pk == self.language.pk)\
-                .options(contains_eager(Word.source_word_assocs))
-        else:
-            query = DBSession.query(common.Unit)\
-                .join(self.Donor, self.Donor.pk == common.Unit.language_pk)\
-                .join(Loan, common.Unit.pk == Loan.source_word_pk)\
-                .join(self.TargetWord, Loan.target_word_pk == self.TargetWord.pk)\
-                .join(self.Recipient, self.Recipient.pk == self.TargetWord.language_pk)\
-                .filter(self.Recipient.pk == self.language.pk)\
-                .options(contains_eager(Word.target_word_assocs))
+        if self.language:
+            if self.type == 'donor':
+                # we are looking for target words borrowed from english into other languages:
+                query = DBSession.query(common.Unit)\
+                    .join(self.Recipient, self.Recipient.pk == common.Unit.language_pk)\
+                    .join(Loan, common.Unit.pk == Loan.target_word_pk)\
+                    .join(self.SourceWord, Loan.source_word_pk == self.SourceWord.pk)\
+                    .join(self.Donor, self.Donor.pk == self.SourceWord.language_pk)\
+                    .filter(self.Donor.pk == self.language.pk)\
+                    .options(contains_eager(Word.source_word_assocs))
+            else:
+                query = DBSession.query(common.Unit)\
+                    .join(self.Donor, self.Donor.pk == common.Unit.language_pk)\
+                    .join(Loan, common.Unit.pk == Loan.source_word_pk)\
+                    .join(self.TargetWord, Loan.target_word_pk == self.TargetWord.pk)\
+                    .join(self.Recipient, self.Recipient.pk == self.TargetWord.language_pk)\
+                    .filter(self.Recipient.pk == self.language.pk)\
+                    .options(contains_eager(Word.target_word_assocs))
         return query
 
     def col_defs(self):
@@ -92,35 +93,37 @@ class Words(Units):
             "recipient language borrowed words directly or indirectly.",
             'recipient': "These are the names of recipient languages that borrowed words "
             "directly or indirectly from this languoid."}[self.type]
-        w1desc = {
-            'donor': "%s words contributed to other languages." % self.language.name,
-            'recipient': "%s words borrowed from other languages." % self.language.name,
-        }[self.type]
-        w2desc = {
-            'donor': "Words borrowed from %s." % self.language.name,
-            'recipient': "Words contributed to %s." % self.language.name,
-        }[self.type]
-        res = [
-            RelWordsCol(
-                self,
-                'self',
-                sTitle='Borrowed words' if self.type != 'donor' else 'Source words',
-                sDescription=w1desc,
-                model_col=self.SourceWord.name
-                if self.type == 'donor' else self.TargetWord.name),
-            RelationCol(self, 'relation'),
-            LinkCol(
-                self, 'language',
-                sTitle=ltitle, sDescription=ldesc,
-                get_obj=lambda i: i.language, model_col=lang.name),
-            LinkCol(
-                self, 'other',
-                model_col=common.Unit.name,
-                sTitle='Borrowed word' if self.type == 'donor' else 'Source word',
-                sDescription=w2desc),
-            LinkToMapCol(
-                self, 'm', get_obj=lambda i: i.language, map_id=self.type + '-map'),
-        ]
+        res = []
+        if self.language:
+            w1desc = {
+                'donor': "%s words contributed to other languages." % self.language.name,
+                'recipient': "%s words borrowed from other languages." % self.language.name,
+            }[self.type]
+            w2desc = {
+                'donor': "Words borrowed from %s." % self.language.name,
+                'recipient': "Words contributed to %s." % self.language.name,
+            }[self.type]
+            res.extend([
+                RelWordsCol(
+                    self,
+                    'self',
+                    sTitle='Borrowed words' if self.type != 'donor' else 'Source words',
+                    sDescription=w1desc,
+                    model_col=self.SourceWord.name
+                    if self.type == 'donor' else self.TargetWord.name),
+                RelationCol(self, 'relation'),
+                LinkCol(
+                    self, 'language',
+                    sTitle=ltitle, sDescription=ldesc,
+                    get_obj=lambda i: i.language, model_col=lang.name),
+                LinkCol(
+                    self, 'other',
+                    model_col=common.Unit.name,
+                    sTitle='Borrowed word' if self.type == 'donor' else 'Source word',
+                    sDescription=w2desc),
+                LinkToMapCol(
+                    self, 'm', get_obj=lambda i: i.language, map_id=self.type + '-map'),
+            ])
         return res
 
     def xhr_query(self):
