@@ -36,16 +36,16 @@ def main(global_config, **settings):
     """
     settings['route_patterns'] = {
         'languages': '/language',
-        'language': '/language/{id:[^/\.]+}',
-        'unit': '/word/{id:[^/\.]+}',
+        'language': r'/language/{id:[^/\.]+}',
+        'unit': r'/word/{id:[^/\.]+}',
         'parameters': '/meaning',
-        'parameter': '/meaning/{id:[^/\.]+}',
+        'parameter': r'/meaning/{id:[^/\.]+}',
         'contributions': '/vocabulary',
-        'contribution': '/vocabulary/{id:[^/\.]+}',
+        'contribution': r'/vocabulary/{id:[^/\.]+}',
         'contributors': '/contributor',
-        'contributor': '/contributor/{id:[^/\.]+}',
+        'contributor': r'/contributor/{id:[^/\.]+}',
         'semanticfields': '/semanticfield',
-        'semanticfield': '/semanticfield/{id:[^/\.]+}',
+        'semanticfield': r'/semanticfield/{id:[^/\.]+}',
         'legal': '/about/legal',
     }
     config = Configurator(settings=settings)
