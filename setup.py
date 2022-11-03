@@ -21,7 +21,7 @@ setup(
     zip_safe=False,
     test_suite='wold2',
     install_requires=[
-        'clld>=9.2.1',
+        'clld>=9.2.2',
         'clldmpg>=4.2',
         'sqlalchemy',
         'waitress',
