@@ -111,6 +111,12 @@ class WoldLanguage(CustomModelMixin, Language):
     pk = Column(Integer, ForeignKey('language.pk'), primary_key=True)
     vocabulary_pk = Column(Integer, ForeignKey('vocabulary.pk'))
     vocabulary = relationship(Vocabulary, backref=backref('language', uselist=False))
+    fm_dl_id = Column(String)
+    wals_equivalent = Column(String, default=None)
+    affiliation = Column(Unicode, default=None)
+    family = Column(String, default=None)  # URL for genus in WALS
+    genus = Column(String, default=None)  # URL for family in WALS
+    countries = Column(Unicode, default=None)
 
 
 @implementer(interfaces.IParameter)
