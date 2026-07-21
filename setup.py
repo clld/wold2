@@ -22,7 +22,7 @@ setup(
     test_suite='wold2',
     install_requires=[
         'clld>=11.5.5',
-        'clldutils>4',
+        'clldutils>=4',
         'clld-glottologfamily-plugin>4',
         'clldmpg>=4.2',
         'sqlalchemy',
