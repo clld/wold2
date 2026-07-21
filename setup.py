@@ -21,7 +21,8 @@ setup(
     zip_safe=False,
     test_suite='wold2',
     install_requires=[
-        'clld>=9.2.2',
+        'clld>=11.5',
+        'clld-glottologfamily-plugin',
         'clldmpg>=4.2',
         'sqlalchemy',
         'waitress',

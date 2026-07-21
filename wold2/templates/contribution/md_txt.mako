@@ -1,4 +1,4 @@
-${', '.join(c.name for c in list(ctx.primary_contributors))}${' (with ' + ', '.join(c.name for c in list(ctx.secondary_contributors)) + ')' if ctx.secondary_contributors else ''}. ${request.dataset.published.year if request.dataset.published else ctx.updated.year}. ${ctx.name} vocabulary.
+${', '.join(c.name for c in list(ctx.primary_contributors))}${' (with ' + ', '.join(c.name for c in list(ctx.secondary_contributors)) + ')' if ctx.secondary_contributors else ''}. ${request.dataset.published.year if request.dataset.published else ctx.updated.year}. ${ctx.name}.
 In: ${request.dataset.formatted_editors()|n} (eds.)
 ${request.dataset.description}.
 ${request.dataset.publisher_place}: ${request.dataset.publisher_name}${', ' + str(entries) + 'entries' if entries else ''}.

@@ -26,6 +26,7 @@ from clld.db.models.common import (
     UnitDomainElement,
     IdNameDescriptionMixin,
 )
+from clld_glottologfamily_plugin.models import HasFamilyMixin
 
 from wold2.interfaces import ISemanticField
 
@@ -107,21 +108,17 @@ class Vocabulary(CustomModelMixin, Contribution):
 
 
 @implementer(interfaces.ILanguage)
-class WoldLanguage(CustomModelMixin, Language):
+class WoldLanguage(CustomModelMixin, Language, HasFamilyMixin):
     pk = Column(Integer, ForeignKey('language.pk'), primary_key=True)
     vocabulary_pk = Column(Integer, ForeignKey('vocabulary.pk'))
     vocabulary = relationship(Vocabulary, backref=backref('language', uselist=False))
-    fm_dl_id = Column(String)
-    wals_equivalent = Column(String, default=None)
-    affiliation = Column(Unicode, default=None)
-    family = Column(String, default=None)  # URL for genus in WALS
-    genus = Column(String, default=None)  # URL for family in WALS
-    countries = Column(Unicode, default=None)
+    glottocode = Column(Unicode)
 
 
 @implementer(interfaces.IParameter)
 class Meaning(CustomModelMixin, Parameter, ScoreMixin):
     pk = Column(Integer, ForeignKey('parameter.pk'), primary_key=True)
+    sfid = Column(Integer)
 
     semantic_field_pk = Column(Integer, ForeignKey('semanticfield.pk'))
     semantic_field = relationship(SemanticField, backref='meanings')

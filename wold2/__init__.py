@@ -50,6 +50,7 @@ def main(global_config, **settings):
     }
     config = Configurator(settings=settings)
     config.include('clldmpg')
+    config.include('clld_glottologfamily_plugin')
     config.registry.registerUtility(WoldMapMarker(), IMapMarker),
     config.register_resource(
         'semanticfield', SemanticField, ISemanticField, with_index=True)

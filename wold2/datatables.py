@@ -2,6 +2,7 @@
 custom datatables for wold2
 """
 from sqlalchemy.orm import joinedload, aliased, contains_eager
+from sqlalchemy import cast
 
 from clldutils.misc import dict_merged
 from clld.web.datatables import Values, Languages
@@ -17,6 +18,8 @@ from clld.web.util.helpers import link
 from clld.db.meta import DBSession
 from clld.db.models import common
 from clld.db.util import get_distinct_values
+from clld_glottologfamily_plugin.models import Family
+from clld_glottologfamily_plugin.datatables import FamilyCol
 
 from wold2.models import (
     Loan, Word, Counterpart, WoldLanguage, Vocabulary, Meaning, SemanticField,
@@ -147,7 +150,7 @@ class LWTCodeCol(Col):
         return self.get_obj(item).id.replace('-', '.')
 
     def order(self):
-        return Meaning.semantic_field_pk, Meaning.sub_code
+        return  Meaning.sfid, Meaning.sub_code
 
     def search(self, qs):
         return Meaning.id.contains(qs.replace('.', '-'))
@@ -313,6 +316,7 @@ class WoldLanguages(Languages):
 
     def base_query(self, query):
         query = Languages.base_query(self, query)
+        query = query.join(Family).options(joinedload(WoldLanguage.family)).distinct()
         return query.outerjoin(
             common.Contribution, WoldLanguage.vocabulary_pk == common.Contribution.pk)
 
@@ -324,9 +328,9 @@ class WoldLanguages(Languages):
                 sDescription="This is the name of the language (or family, in the case "
                 "of donor languages) that was adopted in the World Loanword Database. "
                 "Alternative names can be found on the individual language pages."),
-            Col(self, 'language_family', model_col=WoldLanguage.affiliation,
+            FamilyCol(self, 'Family', WoldLanguage,
                 sDescription="This is the name of the highest family that is generally "
-                "accepted to which the language belongs. "),
+                "accepted to which the language belongs."),
             VocabularyCol(
                 self, 'vocabulary', get_object=lambda i: i.vocabulary,
                 sDescription="For recipient languages, this column shows the "
