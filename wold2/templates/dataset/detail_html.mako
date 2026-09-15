@@ -24,9 +24,7 @@
 
 <h2>The World Loanword Database (WOLD)</h2>
 <p>
-    The World Loanword Database, edited by
-    ${h.external_link("http://email.eva.mpg.de/~haspelmt/", label="Martin Haspelmath")} and
-    ${h.external_link("http://lingweb.eva.mpg.de/jakarta/uri.php", label="Uri Tadmor")}, is a
+    The World Loanword Database, edited by Martin Haspelmath and Uri Tadmor, is a
     scientific publication by the
     ${h.external_link(request.dataset.publisher_url, label=request.dataset.publisher_name)},
     ${request.dataset.publisher_place} (2009). ${h.cite_button(request, ctx)}
@@ -64,5 +62,5 @@
     and annotating words were discussed extensively. The list of 1460 meanings on which the
     vocabularies are based is called the Loanword Typology meaning list, and it is in turn based
     on the list of the
-    ${h.external_link("http://lingweb.eva.mpg.de/ids/", label="Intercontinental Dictionary Series")}.
+    ${h.external_link("https://ids.clld.org", label="Intercontinental Dictionary Series")}.
 </p>
