@@ -2,6 +2,8 @@
 
 Install from github:
 ```shell
+git clone --branch v4.2 --depth 1 https://github.com/lexibank/wold
+git clone --branch v5.3 --depth 1 https://github.com/glottolog/glottolog
 git clone https://github.com/clld/wold2
 cd wold2
 pip install -e .[test]
@@ -9,7 +11,7 @@ pip install -e .[test]
 
 Recreate the database:
 ```shell
-clld initdb development.ini --cldf ../wold/cldf/cldf-metadata.json --glottolog ../../glottolog/glottolog
+clld initdb development.ini --cldf ../wold/cldf/cldf-metadata.json --glottolog ../glottolog
 ```
 
 Run the test suite:
@@ -24,8 +26,6 @@ pip freeze > requirements.txt
 
 Store a db dump:
 ```shell
-pg_dump -xO wold2 > wold2.sql
-zip wold2.sql.zip wold2.sql
-rm wold2.sql
+pg_dump -xO --compress gzip:9 wold2 > wold2.sql.gz
 ```
 
