@@ -50,7 +50,7 @@ def main(args):
     DBSession.add(dataset)
 
     for i, editor in enumerate(['haspelmathmartin', 'tadmoruri']):
-        common.Editor(dataset=dataset, contributor=data['Contributor'][editor], ord=i + 1)
+        DBSession.add(common.Editor(dataset=dataset, contributor=data['Contributor'][editor], ord=i + 1))
 
     id2wold_id = {}
     for row in args.cldf.iter_rows('LanguageTable', 'id', 'name', 'latitude', 'longitude', 'glottocode'):
@@ -369,10 +369,10 @@ def prime_cache(args):
     for type_ in ['borrowed', 'age', 'simplicity']:
         attr = '%s_score' % type_
 
-        for row in DBSession.execute(models.score_per_meaning_query(type_)):
-            meaning = DBSession.query(models.Meaning).get(row['meaning_pk'])
+        for row in DBSession.execute(models.score_per_meaning_query(type_)).mappings():
+            meaning = DBSession.get(models.Meaning, row['meaning_pk'])
             setattr(meaning, attr, row[attr])
 
         for row in DBSession.execute(models.score_per_semanticfield_query(type_)):
-            sf = DBSession.query(models.SemanticField).get(row['semantic_field_pk'])
+            sf = DBSession.get(models.SemanticField, row[0])
             setattr(sf, attr, row[1])

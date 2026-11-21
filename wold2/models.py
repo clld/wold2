@@ -198,54 +198,86 @@ order by
     word, counterpart, parameter, meaning, valueset, value = [
         m.__table__ for m in [Word, Counterpart, Parameter, Meaning, ValueSet, Value]]
 
-    x = alias(
+    #x = alias(
+    #    select(
+    #        [
+    #            counterpart.c.word_pk.label('word_pk'),
+    #            parameter.c.pk.label('meaning_pk'),
+    #            meaning.c.semantic_field_pk.label('semantic_field_pk'),
+    #        ],
+    #        from_obj=value,
+    #        whereclause=and_(
+    #            value.c.valueset_pk == valueset.c.pk,
+    #            valueset.c.parameter_pk == parameter.c.pk,
+    #            parameter.c.pk == meaning.c.pk,
+    #            value.c.pk == counterpart.c.pk)),
+    #    name='x')
+    x = (
         select(
-            [
-                counterpart.c.word_pk.label('word_pk'),
-                parameter.c.pk.label('meaning_pk'),
-                meaning.c.semantic_field_pk.label('semantic_field_pk'),
-            ],
-            from_obj=value,
-            whereclause=and_(
+            counterpart.c.word_pk.label('word_pk'),
+            parameter.c.pk.label('meaning_pk'),
+            meaning.c.semantic_field_pk.label('semantic_field_pk'),
+        )
+        .select_from(value)
+        .where(
+            and_(
                 value.c.valueset_pk == valueset.c.pk,
                 valueset.c.parameter_pk == parameter.c.pk,
                 parameter.c.pk == meaning.c.pk,
-                value.c.pk == counterpart.c.pk)),
-        name='x')
-
-    y = alias(
+                value.c.pk == counterpart.c.pk,
+            )
+        )
+        .subquery('x')
+    )
+    #y = alias(
+    #    select(
+    #        [
+    #            word.c.pk.label('word_pk'),
+    #            (cast(getattr(word.c, attr), Float) / func.count('*')).label(attr),
+    #            (cast(1, Float) / func.count('*')).label('representation'),
+    #        ],
+    #        from_obj=counterpart,
+    #        whereclause=word.c.pk == counterpart.c.word_pk,
+    #        group_by=[word.c.pk, getattr(word.c, attr)],
+    #    ),
+    #    name='y')
+    y = (
         select(
-            [
-                word.c.pk.label('word_pk'),
-                (cast(getattr(word.c, attr), Float) / func.count('*')).label(attr),
-                (cast(1, Float) / func.count('*')).label('representation'),
-            ],
-            from_obj=counterpart,
-            whereclause=word.c.pk == counterpart.c.word_pk,
-            group_by=[word.c.pk, getattr(word.c, attr)],
-        ),
-        name='y')
-
-    a = alias(
+            word.c.pk.label('word_pk'),
+            (cast(getattr(word.c, attr), Float) / func.count('*')).label(attr),
+            (cast(1, Float) / func.count('*')).label('representation'),
+        )
+        .select_from(counterpart)
+        .where(word.c.pk == counterpart.c.word_pk)
+        .group_by(word.c.pk, getattr(word.c, attr))
+        .subquery('y')
+    )
+    #a = alias(
+    #    select(
+    #        [
+    #            x.c.meaning_pk,
+    #            x.c.semantic_field_pk,
+    #            getattr(y.c, attr),
+    #            y.c.representation
+    #        ],
+    #        whereclause=x.c.word_pk == y.c.word_pk),
+    #    name='a')
+    a = (
         select(
-            [
-                x.c.meaning_pk,
-                x.c.semantic_field_pk,
-                getattr(y.c, attr),
-                y.c.representation
-            ],
-            whereclause=x.c.word_pk == y.c.word_pk),
-        name='a')
-
+            x.c.meaning_pk,
+            x.c.semantic_field_pk,
+            getattr(y.c, attr),
+            y.c.representation,
+        )
+        .where(x.c.word_pk == y.c.word_pk)
+        .subquery('a')
+    )
     query = select(
-        [
             a.c.meaning_pk,
             a.c.semantic_field_pk,
             (func.sum(getattr(a.c, attr)) / func.sum(a.c.representation)).label(attr),
             func.count(distinct(a.c.meaning_pk)),
-        ],
-        group_by=[a.c.meaning_pk, a.c.semantic_field_pk],
-        order_by=a.c.meaning_pk)
+    ).group_by(a.c.meaning_pk, a.c.semantic_field_pk).order_by(a.c.meaning_pk)
 
     if isinstance(filter_, Meaning):
         query = query.where(a.c.meaning_pk == filter_.pk)
@@ -257,13 +289,10 @@ order by
 
 
 def score_per_semanticfield_query(type_):  # pragma: no cover
-    aa = alias(score_per_meaning_query(type_), name='aa')
+    aa = score_per_meaning_query(type_).subquery('aa')
 
     return select(
-        [
             aa.c.semantic_field_pk,
             func.sum(getattr(aa.c, '%s_score' % type_)) / func.count('*'),
             func.count('*'),
-        ],
-        group_by=[aa.c.semantic_field_pk]
-    )
+    ).group_by(aa.c.semantic_field_pk)
